@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FinKit — Free Invoice Generator, Loan & Investment Calculators</title>
+<meta name="description" content="Free online tools: multi-currency invoice generator with PDF download, loan/mortgage calculator with prepayment, monthly investment calculator with annual step-up. No signup, works on phone." />
+<meta name="keywords" content="free invoice generator, loan calculator with prepayment, mortgage prepayment calculator, monthly investment calculator, SIP step up calculator, freelancer invoice template" />
+<meta name="author" content="FinKit" />
+<meta property="og:title" content="FinKit — Free Financial Tools for Freelancers & Investors" />
+<meta property="og:description" content="Multi-currency invoice generator, loan prepayment calculator, investment growth calculator. 100% free, no signup." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://earn.vercel.app" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="canonical" href="https://earn.vercel.app" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>$</text></svg>" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "FinKit",
+  "description": "Free invoice generator, loan calculator, and investment calculator for freelancers and individuals worldwide.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0" }
+}
+</script>
+<style>
+  body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .tab-active { background: #0f172a; color: #fff; }
+  input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type=number] { -moz-appearance: textfield; }
+  .num { font-variant-numeric: tabular-nums; }
+  .line-row input { width: 100%; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+<!-- ========== HEADER ========== -->
+<header class="bg-white border-b border-slate-200 sticky top-0 z-20">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+    <a href="/" class="flex items-center gap-2 shrink-0">
+      <span class="text-2xl">💰</span>
+      <h1 class="text-lg font-bold">FinKit</h1>
+    </a>
+    <div class="flex items-center gap-3">
+      <select id="currency" class="text-sm border border-slate-300 rounded-lg px-2 py-1.5 bg-white">
+        <option value="USD">$ USD</option>
+        <option value="EUR">€ EUR</option>
+        <option value="GBP">£ GBP</option>
+        <option value="INR">₹ INR</option>
+        <option value="CAD">C$ CAD</option>
+        <option value="AUD">A$ AUD</option>
+        <option value="AED">AED</option>
+        <option value="SGD">S$ SGD</option>
+        <option value="JPY">¥ JPY</option>
+        <option value="ZAR">R ZAR</option>
+      </select>
+      <a href="/blog/" class="text-sm text-slate-600 hover:text-slate-900 hidden sm:inline">Blog</a>
+    </div>
+  </div>
+</header>
+
+<!-- ========== HERO ========== -->
+<section class="max-w-5xl mx-auto px-4 py-8 text-center">
+  <h2 class="text-2xl sm:text-3xl font-bold mb-2">Free financial tools that actually do the math right.</h2>
+  <p class="text-slate-600 max-w-2xl mx-auto">Generate invoices, calculate loan prepayment savings, project investment growth. Multi-currency. No signup. Works on your phone.</p>
+</section>
+
+<!-- ========== TAB NAV ========== -->
+<nav id="tools" class="max-w-6xl mx-auto px-4">
+  <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3 mb-6">
+    <button data-tab="invoice" class="tab-btn tab-active px-4 py-2 rounded-lg text-sm font-medium">📄 Invoice Generator</button>
+    <button data-tab="loan" class="tab-btn bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium">🏠 Loan Calculator</button>
+    <button data-tab="invest" class="tab-btn bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium">📈 Investment Calculator</button>
+    <button data-tab="rent" class="tab-btn bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium">🇮🇳 Rent Receipt (India)</button>
+    <button data-tab="tax" class="tab-btn bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium">🇮🇳 Tax Regime (India)</button>
+  </div>
+</nav>
+
+<main class="max-w-6xl mx-auto px-4 pb-16">
+
+<!-- ========== INVOICE GENERATOR ========== -->
+<section data-panel="invoice" class="panel">
+  <div class="grid lg:grid-cols-3 gap-6">
+    <div class="bg-white border border-slate-200 rounded-xl p-5 lg:col-span-2">
+      <h3 class="font-semibold mb-4">Invoice Details</h3>
+
+      <div class="grid sm:grid-cols-2 gap-3 mb-4">
+        <div>
+          <label class="block text-xs text-slate-600 mb-1">From (Your business / name)</label>
+          <input id="inv-from-name" type="text" placeholder="Your Name / Company" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+          <textarea id="inv-from-addr" rows="2" placeholder="Your address (optional)" class="w-full border border-slate-300 rounded-lg px-3 py-2 mt-2"></textarea>
+          <input id="inv-from-email" type="email" placeholder="your@email.com" class="w-full border border-slate-300 rounded-lg px-3 py-2 mt-2" />
+        </div>
+        <div>
+          <label class="block text-xs text-slate-600 mb-1">Bill To (Client)</label>
+          <input id="inv-to-name" type="text" placeholder="Client Name / Company" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+          <textarea id="inv-to-addr" rows="2" placeholder="Client address (optional)" class="w-full border border-slate-300 rounded-lg px-3 py-2 mt-2"></textarea>
+          <input id="inv-to-email" type="email" placeholder="client@email.com" class="w-full border border-slate-300 rounded-lg px-3 py-2 mt-2" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3 mb-4">
+        <div>
+          <label class="block text-xs text-slate-600 mb-1">Invoice #</label>
+          <input id="inv-num" type="text" value="INV-001" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-xs text-slate-600 mb-1">Date</label>
+          <input id="inv-date" type="date" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-xs text-slate-600 mb-1">Due Date</label>
+          <input id="inv-due" type="date" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <div class="flex items-center justify-between mb-2">
+          <label class="text-xs text-slate-600">Line Items</label>
+          <button onclick="addLine()" class="text-xs bg-slate-100 hover:bg-slate-200 rounded px-2 py-1">+ Add Line</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm" id="inv-table">
+            <thead>
+              <tr class="text-left text-xs text-slate-500">
+                <th class="pb-1 pl-1">Description</th>
+                <th class="pb-1 w-20">Qty</th>
+                <th class="pb-1 w-28">Rate</th>
+                <th class="pb-1 w-28 text-right">Amount</th>
+                <th class="w-8"></th>
+              </tr>
+            </thead>
+            <tbody id="inv-lines"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-3 mb-4">
+        <div>
+          <label class="block text-xs text-slate-600 mb-1">Tax / VAT / GST (%)</label>
+          <input id="inv-tax" type="number" value="0" step="0.01" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-xs text-slate-600 mb-1">Discount (%)</label>
+          <input id="inv-discount" type="number" value="0" step="0.01" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-xs text-slate-600 mb-1">Notes / Payment instructions</label>
+        <textarea id="inv-notes" rows="2" placeholder="Bank details, PayPal email, payment terms..." class="w-full border border-slate-300 rounded-lg px-3 py-2"></textarea>
+      </div>
+
+      <button onclick="generateInvoice()" class="w-full bg-slate-900 text-white rounded-lg py-2.5 font-medium hover:bg-slate-800">Download Invoice PDF</button>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-3">Summary</h3>
+      <div id="inv-summary" class="space-y-2 text-sm"></div>
+      <div class="mt-6 bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-sm">
+        <p class="font-medium mb-1">Need recurring invoicing?</p>
+        <p class="text-slate-600 text-xs mb-2">Auto-send invoices, track payments, get paid faster.</p>
+        <a href="#" class="text-blue-600 underline text-xs" data-affiliate="invoice-saas">[Wave / FreshBooks / Bonsai affiliate link]</a>
+      </div>
+      <div class="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm">
+        <p class="font-medium mb-1">💡 Pro tip</p>
+        <p class="text-slate-600 text-xs">Invoices including a clear "due date" get paid 1.5× faster on average.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== LOAN CALCULATOR ========== -->
+<section data-panel="loan" class="panel hidden">
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-4">Loan / Mortgage Details</h3>
+      <label class="block text-sm text-slate-600 mb-1">Loan Amount (<span class="cur-sym">$</span>)</label>
+      <input id="emi-amount" type="number" value="200000" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <label class="block text-sm text-slate-600 mb-1">Interest Rate (% per year)</label>
+      <input id="emi-rate" type="number" step="0.01" value="6.5" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <label class="block text-sm text-slate-600 mb-1">Tenure (years)</label>
+      <input id="emi-years" type="number" value="30" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <label class="block text-sm text-slate-600 mb-1">Extra prepayment per month (<span class="cur-sym">$</span>)</label>
+      <input id="emi-extra" type="number" value="0" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <button onclick="calcEMI()" class="w-full bg-slate-900 text-white rounded-lg py-2 font-medium hover:bg-slate-800">Calculate</button>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-4">Result</h3>
+      <div id="emi-result" class="space-y-3 text-sm"></div>
+      <div class="mt-6 bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm">
+        <p class="font-medium mb-1">Compare loan rates</p>
+        <p class="text-slate-600 text-xs mb-2">Get pre-approved offers in 2 minutes (US/UK/IN).</p>
+        <a href="#" class="text-blue-600 underline text-xs" data-affiliate="loan">[Credible / LendingTree / Bajaj affiliate link]</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== INVESTMENT CALCULATOR ========== -->
+<section data-panel="invest" class="panel hidden">
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-4">Monthly Investment Plan</h3>
+      <label class="block text-sm text-slate-600 mb-1">Monthly Investment (<span class="cur-sym">$</span>)</label>
+      <input id="sip-monthly" type="number" value="500" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <label class="block text-sm text-slate-600 mb-1">Expected Annual Return (%)</label>
+      <input id="sip-return" type="number" step="0.1" value="10" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <label class="block text-sm text-slate-600 mb-1">Duration (years)</label>
+      <input id="sip-years" type="number" value="20" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <label class="block text-sm text-slate-600 mb-1">Annual Step-up (%) <span class="text-xs text-slate-400">— increase contribution each year</span></label>
+      <input id="sip-stepup" type="number" step="0.5" value="5" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <button onclick="calcSIP()" class="w-full bg-slate-900 text-white rounded-lg py-2 font-medium hover:bg-slate-800">Calculate</button>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-4">Projection</h3>
+      <div id="sip-result" class="space-y-3 text-sm"></div>
+      <div class="mt-6 bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-sm">
+        <p class="font-medium mb-1">Start investing</p>
+        <p class="text-slate-600 text-xs mb-2">Open a free brokerage / index fund account.</p>
+        <a href="#" class="text-blue-600 underline text-xs" data-affiliate="broker">[eToro / Trading212 / Groww affiliate link]</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== RENT RECEIPT (India bonus) ========== -->
+<section data-panel="rent" class="panel hidden">
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-1">Rent Receipt Generator <span class="text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded">India / HRA</span></h3>
+      <p class="text-xs text-slate-500 mb-4">Generate signed rent receipts (PDF) for HRA tax exemption claims in India.</p>
+      <label class="block text-sm text-slate-600 mb-1">Tenant Name</label>
+      <input id="rr-tenant" type="text" placeholder="Your name" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
+      <label class="block text-sm text-slate-600 mb-1">Landlord Name</label>
+      <input id="rr-landlord" type="text" placeholder="Landlord name" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
+      <label class="block text-sm text-slate-600 mb-1">Landlord PAN (required if rent &gt; ₹1L/yr)</label>
+      <input id="rr-pan" type="text" placeholder="ABCDE1234F" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3 uppercase" />
+      <label class="block text-sm text-slate-600 mb-1">Rented Address</label>
+      <textarea id="rr-address" rows="2" placeholder="Full address" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3"></textarea>
+      <label class="block text-sm text-slate-600 mb-1">Monthly Rent (₹)</label>
+      <input id="rr-rent" type="number" value="20000" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">From Month</label>
+          <input id="rr-from" type="month" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">To Month</label>
+          <input id="rr-to" type="month" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+        </div>
+      </div>
+      <button onclick="generateReceipts()" class="w-full bg-slate-900 text-white rounded-lg py-2 font-medium hover:bg-slate-800">Generate PDF Receipts</button>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-4">How it works</h3>
+      <ul class="text-sm text-slate-600 space-y-2 list-disc pl-5">
+        <li>Generates one signed receipt per month for the date range.</li>
+        <li>Includes revenue stamp note for rent &gt; ₹5,000/month.</li>
+        <li>Required by employers for HRA tax exemption claim.</li>
+        <li>Single PDF, all months — print, sign, submit.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== TAX REGIME (India bonus) ========== -->
+<section data-panel="tax" class="panel hidden">
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-1">Tax Regime Comparator <span class="text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded">India / FY 2024-25</span></h3>
+      <p class="text-xs text-slate-500 mb-4">Compare Old vs New tax regime for Indian salaries.</p>
+      <label class="block text-sm text-slate-600 mb-1">Annual Gross Salary (₹)</label>
+      <input id="tx-salary" type="number" value="1500000" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <p class="text-xs text-slate-500 mb-2">Deductions (used only in Old Regime):</p>
+      <label class="block text-sm text-slate-600 mb-1">80C — max ₹1.5L</label>
+      <input id="tx-80c" type="number" value="150000" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
+      <label class="block text-sm text-slate-600 mb-1">80D — max ₹25k</label>
+      <input id="tx-80d" type="number" value="25000" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
+      <label class="block text-sm text-slate-600 mb-1">HRA Exemption (₹)</label>
+      <input id="tx-hra" type="number" value="0" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
+      <label class="block text-sm text-slate-600 mb-1">Home Loan Interest (24b) — max ₹2L</label>
+      <input id="tx-homeloan" type="number" value="0" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
+      <label class="block text-sm text-slate-600 mb-1">NPS 80CCD(1B) — max ₹50k</label>
+      <input id="tx-nps" type="number" value="0" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <button onclick="calcTax()" class="w-full bg-slate-900 text-white rounded-lg py-2 font-medium hover:bg-slate-800">Compare Regimes</button>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-4">Comparison</h3>
+      <div id="tx-result" class="space-y-3 text-sm"></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer class="border-t border-slate-200 py-6 px-4 bg-white">
+  <div class="max-w-6xl mx-auto text-center text-xs text-slate-500 space-y-2">
+    <div class="flex flex-wrap justify-center gap-4 text-slate-600">
+      <a href="/blog/freelance-invoice-guide.html" class="hover:underline">How to write a freelance invoice</a>
+      <a href="/blog/loan-prepayment-guide.html" class="hover:underline">Loan prepayment explained</a>
+      <a href="/blog/monthly-investing-guide.html" class="hover:underline">Why monthly investing wins</a>
+    </div>
+    <p>For estimation only. Verify with a qualified financial advisor before decisions.</p>
+    <p>© 2026 FinKit. Free forever.</p>
+  </div>
+</footer>
+
+<script>
+// ========== CURRENCY ==========
+const CURRENCIES = {
+  USD: { symbol: '$',   locale: 'en-US' },
+  EUR: { symbol: '€',   locale: 'de-DE' },
+  GBP: { symbol: '£',   locale: 'en-GB' },
+  INR: { symbol: '₹',   locale: 'en-IN' },
+  CAD: { symbol: 'C$',  locale: 'en-CA' },
+  AUD: { symbol: 'A$',  locale: 'en-AU' },
+  AED: { symbol: 'AED ', locale: 'en-AE' },
+  SGD: { symbol: 'S$',  locale: 'en-SG' },
+  JPY: { symbol: '¥',   locale: 'ja-JP' },
+  ZAR: { symbol: 'R ',  locale: 'en-ZA' }
+};
+let CUR = 'USD';
+const fmt = n => {
+  const c = CURRENCIES[CUR];
+  const rounded = Math.round(n * 100) / 100;
+  return c.symbol + rounded.toLocaleString(c.locale, { maximumFractionDigits: 2 });
+};
+const fmtY = (months) => {
+  const y = Math.floor(months / 12), m = Math.round(months % 12);
+  return `${y}y ${m}m`;
+};
+document.getElementById('currency').addEventListener('change', e => {
+  CUR = e.target.value;
+  document.querySelectorAll('.cur-sym').forEach(el => el.textContent = CURRENCIES[CUR].symbol.trim() || '$');
+  // Recalculate visible panels
+  calcEMI(); calcSIP(); recalcInvoice();
+});
+
+// ========== TAB SWITCHING ==========
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('tab-active');
+      b.classList.add('bg-white', 'border', 'border-slate-200');
+    });
+    btn.classList.add('tab-active');
+    btn.classList.remove('bg-white', 'border', 'border-slate-200');
+    document.querySelectorAll('.panel').forEach(p => p.classList.add('hidden'));
+    document.querySelector(`[data-panel="${btn.dataset.tab}"]`).classList.remove('hidden');
+  });
+});
+
+// ========== INVOICE GENERATOR ==========
+function lineRow(desc='', qty=1, rate=0) {
+  const tr = document.createElement('tr');
+  tr.className = 'line-row border-t border-slate-100';
+  tr.innerHTML = `
+    <td class="py-1 pl-1"><input type="text" placeholder="Service / item description" value="${desc}" class="border border-slate-200 rounded px-2 py-1 text-sm w-full"></td>
+    <td class="py-1"><input type="number" value="${qty}" min="0" step="0.01" class="border border-slate-200 rounded px-2 py-1 text-sm w-full text-right"></td>
+    <td class="py-1"><input type="number" value="${rate}" min="0" step="0.01" class="border border-slate-200 rounded px-2 py-1 text-sm w-full text-right"></td>
+    <td class="py-1 text-right num text-sm pr-1">${fmt(qty * rate)}</td>
+    <td class="py-1 text-center"><button class="text-slate-400 hover:text-red-600 text-lg leading-none">×</button></td>
+  `;
+  tr.querySelectorAll('input').forEach(i => i.addEventListener('input', recalcInvoice));
+  tr.querySelector('button').addEventListener('click', () => { tr.remove(); recalcInvoice(); });
+  return tr;
+}
+function addLine() {
+  document.getElementById('inv-lines').appendChild(lineRow('', 1, 0));
+  recalcInvoice();
+}
+function recalcInvoice() {
+  const rows = document.querySelectorAll('#inv-lines tr');
+  let subtotal = 0;
+  rows.forEach(r => {
+    const inputs = r.querySelectorAll('input');
+    const qty = +inputs[1].value || 0;
+    const rate = +inputs[2].value || 0;
+    const amt = qty * rate;
+    r.children[3].textContent = fmt(amt);
+    subtotal += amt;
+  });
+  const tax = +document.getElementById('inv-tax').value || 0;
+  const disc = +document.getElementById('inv-discount').value || 0;
+  const discountAmt = subtotal * disc / 100;
+  const taxedBase = subtotal - discountAmt;
+  const taxAmt = taxedBase * tax / 100;
+  const total = taxedBase + taxAmt;
+  document.getElementById('inv-summary').innerHTML = `
+    <div class="flex justify-between"><span>Subtotal</span><span class="num">${fmt(subtotal)}</span></div>
+    ${disc > 0 ? `<div class="flex justify-between text-slate-500"><span>Discount (${disc}%)</span><span class="num">−${fmt(discountAmt)}</span></div>` : ''}
+    ${tax > 0 ? `<div class="flex justify-between text-slate-500"><span>Tax (${tax}%)</span><span class="num">${fmt(taxAmt)}</span></div>` : ''}
+    <div class="flex justify-between border-t border-slate-200 pt-2 font-bold text-base"><span>Total</span><span class="num">${fmt(total)}</span></div>
+  `;
+}
+['inv-tax','inv-discount'].forEach(id => document.getElementById(id).addEventListener('input', recalcInvoice));
+
+function generateInvoice() {
+  const rows = document.querySelectorAll('#inv-lines tr');
+  if (rows.length === 0) { alert('Add at least one line item.'); return; }
+
+  const fromName = document.getElementById('inv-from-name').value.trim() || 'Your Name';
+  const fromAddr = document.getElementById('inv-from-addr').value.trim();
+  const fromEmail = document.getElementById('inv-from-email').value.trim();
+  const toName = document.getElementById('inv-to-name').value.trim() || 'Client';
+  const toAddr = document.getElementById('inv-to-addr').value.trim();
+  const toEmail = document.getElementById('inv-to-email').value.trim();
+  const num = document.getElementById('inv-num').value || 'INV-001';
+  const date = document.getElementById('inv-date').value || new Date().toISOString().slice(0,10);
+  const due = document.getElementById('inv-due').value || '';
+  const tax = +document.getElementById('inv-tax').value || 0;
+  const disc = +document.getElementById('inv-discount').value || 0;
+  const notes = document.getElementById('inv-notes').value.trim();
+
+  const items = [];
+  let subtotal = 0;
+  rows.forEach(r => {
+    const inputs = r.querySelectorAll('input');
+    const desc = inputs[0].value.trim();
+    const qty = +inputs[1].value || 0;
+    const rate = +inputs[2].value || 0;
+    if (desc || qty || rate) {
+      items.push({ desc: desc || '—', qty, rate, amt: qty * rate });
+      subtotal += qty * rate;
+    }
+  });
+  const discAmt = subtotal * disc / 100;
+  const taxedBase = subtotal - discAmt;
+  const taxAmt = taxedBase * tax / 100;
+  const total = taxedBase + taxAmt;
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const M = 20; // margin
+
+  // Header
+  doc.setFontSize(28); doc.setFont('helvetica','bold');
+  doc.text('INVOICE', M, 25);
+  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.text(`# ${num}`, 210 - M, 25, { align: 'right' });
+  doc.text(`Date: ${date}`, 210 - M, 32, { align: 'right' });
+  if (due) doc.text(`Due: ${due}`, 210 - M, 38, { align: 'right' });
+
+  // From / To
+  doc.setFontSize(9); doc.setTextColor(120);
+  doc.text('FROM', M, 50);
+  doc.text('BILL TO', 110, 50);
+  doc.setTextColor(0); doc.setFontSize(11); doc.setFont('helvetica','bold');
+  doc.text(fromName, M, 57);
+  doc.text(toName, 110, 57);
+  doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  let yL = 63, yR = 63;
+  if (fromAddr) { const sp = doc.splitTextToSize(fromAddr, 80); doc.text(sp, M, yL); yL += sp.length * 5; }
+  if (fromEmail) { doc.text(fromEmail, M, yL); yL += 5; }
+  if (toAddr) { const sp = doc.splitTextToSize(toAddr, 80); doc.text(sp, 110, yR); yR += sp.length * 5; }
+  if (toEmail) { doc.text(toEmail, 110, yR); yR += 5; }
+
+  let y = Math.max(yL, yR, 80) + 8;
+
+  // Table header
+  doc.setFillColor(15, 23, 42); doc.rect(M, y, 170, 8, 'F');
+  doc.setTextColor(255); doc.setFontSize(9); doc.setFont('helvetica','bold');
+  doc.text('DESCRIPTION', M + 2, y + 5.5);
+  doc.text('QTY', M + 105, y + 5.5);
+  doc.text('RATE', M + 125, y + 5.5);
+  doc.text('AMOUNT', M + 168, y + 5.5, { align: 'right' });
+  y += 10;
+  doc.setTextColor(0); doc.setFont('helvetica','normal'); doc.setFontSize(10);
+
+  items.forEach(it => {
+    if (y > 250) { doc.addPage(); y = 20; }
+    const descLines = doc.splitTextToSize(it.desc, 95);
+    doc.text(descLines, M + 2, y + 4);
+    doc.text(String(it.qty), M + 105, y + 4);
+    doc.text(fmt(it.rate), M + 125, y + 4);
+    doc.text(fmt(it.amt), M + 168, y + 4, { align: 'right' });
+    y += Math.max(descLines.length * 5, 7);
+    doc.setDrawColor(220); doc.line(M, y, M + 170, y);
+    y += 3;
+  });
+
+  // Totals
+  y += 4;
+  doc.setFontSize(10);
+  doc.text('Subtotal', M + 120, y); doc.text(fmt(subtotal), M + 168, y, { align: 'right' }); y += 6;
+  if (disc > 0) { doc.text(`Discount (${disc}%)`, M + 120, y); doc.text('−' + fmt(discAmt), M + 168, y, { align: 'right' }); y += 6; }
+  if (tax > 0) { doc.text(`Tax (${tax}%)`, M + 120, y); doc.text(fmt(taxAmt), M + 168, y, { align: 'right' }); y += 6; }
+  doc.setFont('helvetica','bold'); doc.setFontSize(12);
+  doc.setFillColor(15, 23, 42); doc.rect(M + 110, y - 2, 80, 9, 'F');
+  doc.setTextColor(255);
+  doc.text('TOTAL', M + 120, y + 4);
+  doc.text(fmt(total), M + 188, y + 4, { align: 'right' });
+  doc.setTextColor(0); doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  y += 18;
+
+  // Notes
+  if (notes) {
+    doc.setFontSize(9); doc.setTextColor(120); doc.text('NOTES', M, y);
+    doc.setTextColor(0); doc.setFontSize(10);
+    const sp = doc.splitTextToSize(notes, 170);
+    doc.text(sp, M, y + 6);
+  }
+
+  // Footer
+  doc.setFontSize(8); doc.setTextColor(150);
+  doc.text('Thank you for your business.', 105, 285, { align: 'center' });
+
+  doc.save(`Invoice_${num}.pdf`);
+}
+
+// Initialize invoice with one empty line + today's date
+document.getElementById('inv-date').valueAsDate = new Date();
+document.getElementById('inv-lines').appendChild(lineRow('', 1, 0));
+
+// ========== LOAN CALCULATOR ==========
+function calcEMI() {
+  const P = +document.getElementById('emi-amount').value;
+  const annualRate = +document.getElementById('emi-rate').value;
+  const years = +document.getElementById('emi-years').value;
+  const extra = +document.getElementById('emi-extra').value || 0;
+  if (!P || !annualRate || !years) { document.getElementById('emi-result').innerHTML = '<p class="text-slate-400">Fill all fields.</p>'; return; }
+  const r = annualRate / 12 / 100;
+  const n = years * 12;
+  const emi = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+  const totalStd = emi * n;
+  const interestStd = totalStd - P;
+  let bal = P, monthsPrepay = 0, interestPrepay = 0;
+  while (bal > 0 && monthsPrepay < 1000) {
+    const intMonth = bal * r;
+    let principalPaid = (emi + extra) - intMonth;
+    if (principalPaid > bal) principalPaid = bal;
+    bal -= principalPaid;
+    interestPrepay += intMonth;
+    monthsPrepay++;
+  }
+  const savedInt = interestStd - interestPrepay;
+  const savedMonths = n - monthsPrepay;
+  let html = `
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Monthly Payment</span><span class="num font-semibold">${fmt(emi)}</span></div>
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Total Interest</span><span class="num">${fmt(interestStd)}</span></div>
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Total Payment</span><span class="num">${fmt(totalStd)}</span></div>
+  `;
+  if (extra > 0) {
+    html += `
+      <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mt-3">
+        <p class="font-semibold text-emerald-900 mb-2">With ${fmt(extra)}/month extra:</p>
+        <div class="flex justify-between text-emerald-900"><span>Loan paid in</span><span class="num font-semibold">${fmtY(monthsPrepay)}</span></div>
+        <div class="flex justify-between text-emerald-900"><span>Time saved</span><span class="num">${fmtY(savedMonths)}</span></div>
+        <div class="flex justify-between text-emerald-900"><span>Interest saved</span><span class="num font-semibold">${fmt(savedInt)}</span></div>
+      </div>
+    `;
+  }
+  document.getElementById('emi-result').innerHTML = html;
+}
+
+// ========== INVESTMENT CALCULATOR ==========
+function calcSIP() {
+  const monthly = +document.getElementById('sip-monthly').value;
+  const ret = +document.getElementById('sip-return').value;
+  const years = +document.getElementById('sip-years').value;
+  const stepup = +document.getElementById('sip-stepup').value || 0;
+  if (!monthly || !ret || !years) { document.getElementById('sip-result').innerHTML = '<p class="text-slate-400">Fill all fields.</p>'; return; }
+  const r = ret / 12 / 100;
+  let corpus = 0, invested = 0, current = monthly;
+  for (let y = 0; y < years; y++) {
+    for (let m = 0; m < 12; m++) {
+      corpus = (corpus + current) * (1 + r);
+      invested += current;
+    }
+    current = current * (1 + stepup / 100);
+  }
+  const gains = corpus - invested;
+  let corpusNoStep = 0;
+  for (let m = 0; m < years * 12; m++) corpusNoStep = (corpusNoStep + monthly) * (1 + r);
+  const extraFromStepup = corpus - corpusNoStep;
+  document.getElementById('sip-result').innerHTML = `
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Total Invested</span><span class="num">${fmt(invested)}</span></div>
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Wealth Gained</span><span class="num text-emerald-700 font-semibold">${fmt(gains)}</span></div>
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Final Corpus</span><span class="num font-bold text-lg">${fmt(corpus)}</span></div>
+    ${stepup > 0 ? `<div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mt-3 text-emerald-900">
+      <p class="font-semibold mb-1">Step-up boost</p>
+      <p>Stepping up ${stepup}% yearly added <span class="font-bold">${fmt(extraFromStepup)}</span> over flat contributions.</p>
+    </div>` : ''}
+  `;
+}
+
+// ========== RENT RECEIPT (India) ==========
+function generateReceipts() {
+  const tenant = document.getElementById('rr-tenant').value.trim();
+  const landlord = document.getElementById('rr-landlord').value.trim();
+  const pan = document.getElementById('rr-pan').value.trim().toUpperCase();
+  const address = document.getElementById('rr-address').value.trim();
+  const rent = +document.getElementById('rr-rent').value;
+  const fromVal = document.getElementById('rr-from').value;
+  const toVal = document.getElementById('rr-to').value;
+  if (!tenant || !landlord || !address || !rent || !fromVal || !toVal) { alert('Please fill all required fields.'); return; }
+  const [fy, fm] = fromVal.split('-').map(Number);
+  const [ty, tm] = toVal.split('-').map(Number);
+  const fromDate = new Date(fy, fm - 1, 1);
+  const toDate = new Date(ty, tm - 1, 1);
+  if (fromDate > toDate) { alert('From month must be before To month.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  let cur = new Date(fromDate);
+  let first = true;
+  while (cur <= toDate) {
+    if (!first) doc.addPage();
+    first = false;
+    const mName = months[cur.getMonth()];
+    const yr = cur.getFullYear();
+    const lastDay = new Date(yr, cur.getMonth() + 1, 0).getDate();
+    const receiptDate = `${String(lastDay).padStart(2,'0')}-${String(cur.getMonth()+1).padStart(2,'0')}-${yr}`;
+    doc.setFontSize(18); doc.setFont('helvetica','bold');
+    doc.text('RENT RECEIPT', 105, 25, { align: 'center' });
+    doc.setLineWidth(0.5); doc.line(20, 30, 190, 30);
+    doc.setFontSize(11); doc.setFont('helvetica','normal');
+    doc.text(`Date: ${receiptDate}`, 20, 42);
+    doc.text(`Receipt for the month of: ${mName} ${yr}`, 20, 52);
+    const amountWords = numToWords(rent) + ' Rupees Only';
+    const body = [
+      `Received a sum of Rs. ${rent.toLocaleString('en-IN')}/- (${amountWords})`,
+      `from Mr/Ms. ${tenant} towards the rent of the property located at:`,
+      address,
+      `for the period of ${mName} ${yr}.`
+    ];
+    let y = 68;
+    body.forEach(line => { const split = doc.splitTextToSize(line, 170); doc.text(split, 20, y); y += split.length * 7; });
+    if (rent * 12 > 100000 && !pan) {
+      doc.setTextColor(180,0,0);
+      doc.text('Note: Annual rent exceeds Rs.1,00,000 — Landlord PAN is mandatory.', 20, y + 6);
+      doc.setTextColor(0,0,0);
+      y += 12;
+    }
+    if (rent > 5000) {
+      doc.setFontSize(9);
+      doc.text('(Affix Re.1 revenue stamp here as per Indian Stamp Act)', 20, y + 14);
+      doc.rect(20, y + 18, 25, 18);
+      doc.setFontSize(11);
+    }
+    doc.text('Landlord Details:', 130, y + 20);
+    doc.text(`Name: ${landlord}`, 130, y + 28);
+    if (pan) doc.text(`PAN: ${pan}`, 130, y + 36);
+    doc.line(130, y + 50, 185, y + 50);
+    doc.text('Signature', 145, y + 56);
+    cur.setMonth(cur.getMonth() + 1);
+  }
+  doc.save(`RentReceipts_${tenant.replace(/\s+/g,'_')}.pdf`);
+}
+function numToWords(num) {
+  const a = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+  const b = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+  if (num === 0) return 'Zero';
+  const inWords = (n) => {
+    if (n < 20) return a[n];
+    if (n < 100) return b[Math.floor(n/10)] + (n%10 ? ' ' + a[n%10] : '');
+    return a[Math.floor(n/100)] + ' Hundred' + (n%100 ? ' ' + inWords(n%100) : '');
+  };
+  let str = '';
+  const crore = Math.floor(num / 10000000); num %= 10000000;
+  const lakh = Math.floor(num / 100000); num %= 100000;
+  const thousand = Math.floor(num / 1000); num %= 1000;
+  if (crore) str += inWords(crore) + ' Crore ';
+  if (lakh) str += inWords(lakh) + ' Lakh ';
+  if (thousand) str += inWords(thousand) + ' Thousand ';
+  if (num) str += inWords(num);
+  return str.trim();
+}
+
+// ========== TAX REGIME (India) ==========
+function calcTax() {
+  const salary = +document.getElementById('tx-salary').value;
+  const c80 = Math.min(+document.getElementById('tx-80c').value || 0, 150000);
+  const d80 = Math.min(+document.getElementById('tx-80d').value || 0, 25000);
+  const hra = +document.getElementById('tx-hra').value || 0;
+  const homeloan = Math.min(+document.getElementById('tx-homeloan').value || 0, 200000);
+  const nps = Math.min(+document.getElementById('tx-nps').value || 0, 50000);
+  const oldStdDed = 50000;
+  const oldTaxable = Math.max(0, salary - oldStdDed - c80 - d80 - hra - homeloan - nps);
+  const oldTax = applyOldSlabs(oldTaxable);
+  const newStdDed = 75000;
+  const newTaxable = Math.max(0, salary - newStdDed);
+  const newTax = applyNewSlabs(newTaxable);
+  const better = oldTax < newTax ? 'Old' : 'New';
+  const savings = Math.abs(oldTax - newTax);
+  const fmtINR = n => '₹' + Math.round(n).toLocaleString('en-IN');
+  document.getElementById('tx-result').innerHTML = `
+    <div class="grid grid-cols-2 gap-3">
+      <div class="border border-slate-200 rounded-lg p-3 ${better==='Old'?'bg-emerald-50 border-emerald-300':''}">
+        <p class="text-xs text-slate-500">Old Regime</p>
+        <p class="text-xs">Taxable: <span class="num">${fmtINR(oldTaxable)}</span></p>
+        <p class="text-lg font-bold num">${fmtINR(oldTax)}</p>
+      </div>
+      <div class="border border-slate-200 rounded-lg p-3 ${better==='New'?'bg-emerald-50 border-emerald-300':''}">
+        <p class="text-xs text-slate-500">New Regime</p>
+        <p class="text-xs">Taxable: <span class="num">${fmtINR(newTaxable)}</span></p>
+        <p class="text-lg font-bold num">${fmtINR(newTax)}</p>
+      </div>
+    </div>
+    <div class="bg-slate-900 text-white rounded-lg p-3 mt-3">
+      <p class="text-sm">Recommended: <span class="font-bold">${better} Regime</span></p>
+      <p class="text-xs text-slate-300">Saves ${fmtINR(savings)} per year vs the other regime.</p>
+    </div>
+    <p class="text-xs text-slate-500 mt-2">Includes 4% cess. Surcharge for income &gt; ₹50L not included.</p>
+  `;
+}
+function applyOldSlabs(t) {
+  let tax = 0;
+  if (t > 1000000) { tax += (t - 1000000) * 0.30; t = 1000000; }
+  if (t > 500000)  { tax += (t - 500000) * 0.20;  t = 500000; }
+  if (t > 250000)  { tax += (t - 250000) * 0.05; }
+  const fullTaxable = +document.getElementById('tx-salary').value - 50000 - (+document.getElementById('tx-80c').value||0) - (+document.getElementById('tx-80d').value||0);
+  if (fullTaxable <= 500000) tax = 0;
+  return tax * 1.04;
+}
+function applyNewSlabs(t) {
+  let tax = 0;
+  const orig = t;
+  if (t > 1500000) { tax += (t - 1500000) * 0.30; t = 1500000; }
+  if (t > 1200000) { tax += (t - 1200000) * 0.20; t = 1200000; }
+  if (t > 1000000) { tax += (t - 1000000) * 0.15; t = 1000000; }
+  if (t > 700000)  { tax += (t - 700000) * 0.10;  t = 700000; }
+  if (t > 300000)  { tax += (t - 300000) * 0.05; }
+  if (orig <= 700000) tax = 0;
+  return tax * 1.04;
+}
+
+// Init
+calcEMI(); calcSIP(); calcTax(); recalcInvoice();
+</script>
+
+</body>
+</html>
