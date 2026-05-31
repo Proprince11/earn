@@ -75,8 +75,9 @@
     <button data-tab="invoice" class="tab-btn tab-active px-4 py-2 rounded-lg text-sm font-medium">📄 Invoice Generator</button>
     <button data-tab="loan" class="tab-btn bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium">🏠 Loan Calculator</button>
     <button data-tab="invest" class="tab-btn bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium">📈 Investment Calculator</button>
+    <button data-tab="convert" class="tab-btn bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium">💱 Currency Converter</button>
+    <button data-tab="tax" class="tab-btn bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium">🧾 Income Tax</button>
     <button data-tab="rent" class="tab-btn bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium">🇮🇳 Rent Receipt (India)</button>
-    <button data-tab="tax" class="tab-btn bg-white border border-slate-200 px-4 py-2 rounded-lg text-sm font-medium">🇮🇳 Tax Regime (India)</button>
   </div>
 </nav>
 
@@ -94,6 +95,9 @@
           <input id="inv-from-name" type="text" placeholder="Your Name / Company" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
           <textarea id="inv-from-addr" rows="2" placeholder="Your address (optional)" class="w-full border border-slate-300 rounded-lg px-3 py-2 mt-2"></textarea>
           <input id="inv-from-email" type="email" placeholder="your@email.com" class="w-full border border-slate-300 rounded-lg px-3 py-2 mt-2" />
+          <label class="block text-xs text-slate-600 mb-1 mt-2">Logo (optional, PNG/JPG)</label>
+          <input id="inv-logo" type="file" accept="image/png,image/jpeg" class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 file:mr-3 file:rounded file:border-0 file:bg-slate-100 file:px-2 file:py-1 file:text-xs" />
+          <div id="inv-logo-preview" class="mt-2"></div>
         </div>
         <div>
           <label class="block text-xs text-slate-600 mb-1">Bill To (Client)</label>
@@ -228,6 +232,103 @@
   </div>
 </section>
 
+<!-- ========== CURRENCY CONVERTER (live API) ========== -->
+<section data-panel="convert" class="panel hidden">
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-1">Currency Converter</h3>
+      <p class="text-xs text-slate-500 mb-4">Live exchange rates, updated daily. No signup.</p>
+      <label class="block text-sm text-slate-600 mb-1">Amount</label>
+      <input id="cc-amount" type="number" value="100" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">From</label>
+          <select id="cc-from" class="w-full border border-slate-300 rounded-lg px-3 py-2"></select>
+        </div>
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">To</label>
+          <select id="cc-to" class="w-full border border-slate-300 rounded-lg px-3 py-2"></select>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="convertCurrency()" class="flex-1 bg-slate-900 text-white rounded-lg py-2 font-medium hover:bg-slate-800">Convert</button>
+        <button onclick="swapCurrency()" title="Swap" class="px-3 bg-slate-100 hover:bg-slate-200 rounded-lg">⇅</button>
+      </div>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-4">Result</h3>
+      <div id="cc-result" class="space-y-3 text-sm"><p class="text-slate-400">Enter an amount and press Convert.</p></div>
+      <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm">
+        <p class="font-medium mb-1">Sending money abroad?</p>
+        <p class="text-slate-600 text-xs mb-2">Skip bank FX markups — get the real mid-market rate.</p>
+        <a href="#" class="text-blue-600 underline text-xs" data-affiliate="fx">[Wise / Remitly affiliate link]</a>
+      </div>
+      <p id="cc-source" class="text-xs text-slate-400 mt-3"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== INCOME TAX (India + US) ========== -->
+<section data-panel="tax" class="panel hidden">
+  <div class="mb-4 flex items-center gap-3">
+    <label class="text-sm text-slate-600">Country:</label>
+    <select id="tax-country" class="border border-slate-300 rounded-lg px-3 py-2 text-sm">
+      <option value="india">🇮🇳 India (FY 2024-25)</option>
+      <option value="us">🇺🇸 United States (2024)</option>
+    </select>
+  </div>
+
+  <!-- India sub-panel -->
+  <div id="tax-india" class="grid md:grid-cols-2 gap-6">
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-1">Old vs New Regime <span class="text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded">India / FY 2024-25</span></h3>
+      <p class="text-xs text-slate-500 mb-4">Compare both Indian tax regimes for your salary.</p>
+      <label class="block text-sm text-slate-600 mb-1">Annual Gross Salary (₹)</label>
+      <input id="tx-salary" type="number" value="1500000" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <p class="text-xs text-slate-500 mb-2">Deductions (used only in Old Regime):</p>
+      <label class="block text-sm text-slate-600 mb-1">80C — max ₹1.5L</label>
+      <input id="tx-80c" type="number" value="150000" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
+      <label class="block text-sm text-slate-600 mb-1">80D — max ₹25k</label>
+      <input id="tx-80d" type="number" value="25000" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
+      <label class="block text-sm text-slate-600 mb-1">HRA Exemption (₹)</label>
+      <input id="tx-hra" type="number" value="0" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
+      <label class="block text-sm text-slate-600 mb-1">Home Loan Interest (24b) — max ₹2L</label>
+      <input id="tx-homeloan" type="number" value="0" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
+      <label class="block text-sm text-slate-600 mb-1">NPS 80CCD(1B) — max ₹50k</label>
+      <input id="tx-nps" type="number" value="0" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <button onclick="calcTax()" class="w-full bg-slate-900 text-white rounded-lg py-2 font-medium hover:bg-slate-800">Compare Regimes</button>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-4">Comparison</h3>
+      <div id="tx-result" class="space-y-3 text-sm"></div>
+    </div>
+  </div>
+
+  <!-- US sub-panel -->
+  <div id="tax-us" class="hidden grid md:grid-cols-2 gap-6">
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-1">Federal Income Tax <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">US / 2024</span></h3>
+      <p class="text-xs text-slate-500 mb-4">Estimate federal income tax using 2024 brackets + standard deduction.</p>
+      <label class="block text-sm text-slate-600 mb-1">Annual Gross Income ($)</label>
+      <input id="us-income" type="number" value="80000" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <label class="block text-sm text-slate-600 mb-1">Filing Status</label>
+      <select id="us-status" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4">
+        <option value="single">Single</option>
+        <option value="mfj">Married filing jointly</option>
+        <option value="hoh">Head of household</option>
+      </select>
+      <label class="block text-sm text-slate-600 mb-1">Extra deductions beyond standard ($, optional)</label>
+      <input id="us-deduct" type="number" value="0" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <button onclick="calcUSTax()" class="w-full bg-slate-900 text-white rounded-lg py-2 font-medium hover:bg-slate-800">Calculate</button>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-4">Estimate</h3>
+      <div id="us-result" class="space-y-3 text-sm"></div>
+      <p class="text-xs text-slate-400 mt-3">Federal income tax only. Excludes FICA (Social Security/Medicare), state, and local taxes. Estimate — verify with a tax professional.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ========== RENT RECEIPT (India bonus) ========== -->
 <section data-panel="rent" class="panel hidden">
   <div class="grid md:grid-cols-2 gap-6">
@@ -264,34 +365,6 @@
         <li>Required by employers for HRA tax exemption claim.</li>
         <li>Single PDF, all months — print, sign, submit.</li>
       </ul>
-    </div>
-  </div>
-</section>
-
-<!-- ========== TAX REGIME (India bonus) ========== -->
-<section data-panel="tax" class="panel hidden">
-  <div class="grid md:grid-cols-2 gap-6">
-    <div class="bg-white border border-slate-200 rounded-xl p-5">
-      <h3 class="font-semibold mb-1">Tax Regime Comparator <span class="text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded">India / FY 2024-25</span></h3>
-      <p class="text-xs text-slate-500 mb-4">Compare Old vs New tax regime for Indian salaries.</p>
-      <label class="block text-sm text-slate-600 mb-1">Annual Gross Salary (₹)</label>
-      <input id="tx-salary" type="number" value="1500000" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
-      <p class="text-xs text-slate-500 mb-2">Deductions (used only in Old Regime):</p>
-      <label class="block text-sm text-slate-600 mb-1">80C — max ₹1.5L</label>
-      <input id="tx-80c" type="number" value="150000" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
-      <label class="block text-sm text-slate-600 mb-1">80D — max ₹25k</label>
-      <input id="tx-80d" type="number" value="25000" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
-      <label class="block text-sm text-slate-600 mb-1">HRA Exemption (₹)</label>
-      <input id="tx-hra" type="number" value="0" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
-      <label class="block text-sm text-slate-600 mb-1">Home Loan Interest (24b) — max ₹2L</label>
-      <input id="tx-homeloan" type="number" value="0" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-3" />
-      <label class="block text-sm text-slate-600 mb-1">NPS 80CCD(1B) — max ₹50k</label>
-      <input id="tx-nps" type="number" value="0" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
-      <button onclick="calcTax()" class="w-full bg-slate-900 text-white rounded-lg py-2 font-medium hover:bg-slate-800">Compare Regimes</button>
-    </div>
-    <div class="bg-white border border-slate-200 rounded-xl p-5">
-      <h3 class="font-semibold mb-4">Comparison</h3>
-      <div id="tx-result" class="space-y-3 text-sm"></div>
     </div>
   </div>
 </section>
@@ -439,13 +512,21 @@ function generateInvoice() {
   const doc = new jsPDF();
   const M = 20; // margin
 
-  // Header
+  // Header (with optional logo)
+  if (invLogo && invLogo.data) {
+    try { doc.addImage(invLogo.data, invLogo.fmt, M, 12, invLogo.w, invLogo.h); } catch (e) { /* unsupported image, skip */ }
+  }
   doc.setFontSize(28); doc.setFont('helvetica','bold');
-  doc.text('INVOICE', M, 25);
+  if (invLogo && invLogo.data) {
+    doc.text('INVOICE', 210 - M, 20, { align: 'right' });
+  } else {
+    doc.text('INVOICE', M, 25);
+  }
   doc.setFontSize(10); doc.setFont('helvetica','normal');
-  doc.text(`# ${num}`, 210 - M, 25, { align: 'right' });
-  doc.text(`Date: ${date}`, 210 - M, 32, { align: 'right' });
-  if (due) doc.text(`Due: ${due}`, 210 - M, 38, { align: 'right' });
+  const metaY = (invLogo && invLogo.data) ? 28 : 25;
+  doc.text(`# ${num}`, 210 - M, metaY, { align: 'right' });
+  doc.text(`Date: ${date}`, 210 - M, metaY + 7, { align: 'right' });
+  if (due) doc.text(`Due: ${due}`, 210 - M, metaY + 14, { align: 'right' });
 
   // From / To
   doc.setFontSize(9); doc.setTextColor(120);
@@ -517,6 +598,31 @@ function generateInvoice() {
 // Initialize invoice with one empty line + today's date
 document.getElementById('inv-date').valueAsDate = new Date();
 document.getElementById('inv-lines').appendChild(lineRow('', 1, 0));
+
+// ========== INVOICE LOGO UPLOAD ==========
+let invLogo = null; // { data, fmt, w, h } in mm
+document.getElementById('inv-logo').addEventListener('change', function (e) {
+  const file = e.target.files && e.target.files[0];
+  const preview = document.getElementById('inv-logo-preview');
+  if (!file) { invLogo = null; preview.innerHTML = ''; return; }
+  if (file.size > 2 * 1024 * 1024) { alert('Logo too large (max 2 MB). Please use a smaller image.'); e.target.value = ''; return; }
+  const reader = new FileReader();
+  reader.onload = function (ev) {
+    const dataUrl = ev.target.result;
+    const fmt = file.type === 'image/png' ? 'PNG' : 'JPEG';
+    const img = new Image();
+    img.onload = function () {
+      const aspect = (img.naturalWidth / img.naturalHeight) || 1;
+      let w = 45, h = w / aspect;          // fit within 45mm wide
+      if (h > 18) { h = 18; w = h * aspect; } // and 18mm tall
+      invLogo = { data: dataUrl, fmt: fmt, w: w, h: h };
+      preview.innerHTML = '<img src="' + dataUrl + '" alt="logo preview" style="max-height:44px" class="rounded border border-slate-200 p-1 bg-white" />';
+    };
+    img.onerror = function () { invLogo = null; preview.innerHTML = '<p class="text-xs text-red-600">Could not read image.</p>'; };
+    img.src = dataUrl;
+  };
+  reader.readAsDataURL(file);
+});
 
 // ========== LOAN CALCULATOR ==========
 function calcEMI() {
@@ -731,8 +837,141 @@ function applyNewSlabs(t) {
   return tax * 1.04;
 }
 
+// ========== CURRENCY CONVERTER (live API) ==========
+const CC_LIST = ['USD','EUR','GBP','INR','CAD','AUD','AED','SGD','JPY','ZAR','CNY','CHF','HKD','NZD','BRL','RUB','KRW','MXN','SAR','SEK','NOK','DKK','PLN','THB','IDR','PHP','MYR','TRY','NGN','KES'];
+let ccRatesCache = {}; // base -> { rates, date }
+
+function populateCC() {
+  const from = document.getElementById('cc-from'), to = document.getElementById('cc-to');
+  CC_LIST.forEach(c => {
+    from.add(new Option(c, c));
+    to.add(new Option(c, c));
+  });
+  from.value = 'USD';
+  to.value = 'EUR';
+}
+
+function swapCurrency() {
+  const from = document.getElementById('cc-from'), to = document.getElementById('cc-to');
+  const tmp = from.value; from.value = to.value; to.value = tmp;
+  convertCurrency();
+}
+
+async function fetchRates(base) {
+  if (ccRatesCache[base]) return ccRatesCache[base];
+  // Primary: open.er-api.com (no key)
+  try {
+    const r = await fetch('https://open.er-api.com/v6/latest/' + base);
+    const d = await r.json();
+    if (d && d.result === 'success' && d.rates) {
+      ccRatesCache[base] = { rates: d.rates, date: d.time_last_update_utc || '', src: 'open.er-api.com' };
+      return ccRatesCache[base];
+    }
+  } catch (e) { /* fall through to backup */ }
+  // Backup: frankfurter.dev
+  try {
+    const r = await fetch('https://api.frankfurter.dev/v1/latest?base=' + base);
+    const d = await r.json();
+    if (d && d.rates) {
+      d.rates[base] = 1;
+      ccRatesCache[base] = { rates: d.rates, date: d.date || '', src: 'frankfurter.dev (ECB)' };
+      return ccRatesCache[base];
+    }
+  } catch (e) { /* both failed */ }
+  return null;
+}
+
+async function convertCurrency() {
+  const amount = +document.getElementById('cc-amount').value;
+  const from = document.getElementById('cc-from').value;
+  const to = document.getElementById('cc-to').value;
+  const out = document.getElementById('cc-result');
+  const srcEl = document.getElementById('cc-source');
+  if (!amount && amount !== 0) { out.innerHTML = '<p class="text-slate-400">Enter an amount.</p>'; return; }
+  out.innerHTML = '<p class="text-slate-400">Fetching live rate…</p>';
+  const data = await fetchRates(from);
+  if (!data || !data.rates[to]) {
+    out.innerHTML = '<p class="text-red-600 text-sm">Could not fetch live rates right now. Please try again in a moment.</p>';
+    srcEl.textContent = '';
+    return;
+  }
+  const rate = data.rates[to];
+  const converted = amount * rate;
+  const nf = n => n.toLocaleString('en-US', { maximumFractionDigits: 2 });
+  out.innerHTML = `
+    <div class="text-center py-2">
+      <p class="text-slate-500 text-sm">${nf(amount)} ${from} =</p>
+      <p class="text-3xl font-bold num">${nf(converted)} ${to}</p>
+      <p class="text-slate-500 text-sm mt-2">1 ${from} = ${nf(rate)} ${to}</p>
+      <p class="text-slate-500 text-xs">1 ${to} = ${nf(1/rate)} ${from}</p>
+    </div>
+  `;
+  srcEl.textContent = `Rates: ${data.src}${data.date ? ' · ' + data.date : ''}`;
+}
+
+// ========== US FEDERAL TAX (2024) ==========
+const US_BRACKETS = {
+  single: [[0,0.10],[11600,0.12],[47150,0.22],[100525,0.24],[191950,0.32],[243725,0.35],[609350,0.37]],
+  mfj:    [[0,0.10],[23200,0.12],[94300,0.22],[201050,0.24],[383900,0.32],[487450,0.35],[731200,0.37]],
+  hoh:    [[0,0.10],[16550,0.12],[63100,0.22],[100500,0.24],[191950,0.32],[243700,0.35],[609350,0.37]]
+};
+const US_STD_DED = { single: 14600, mfj: 29200, hoh: 21900 };
+
+function usFederalTax(taxable, status) {
+  const b = US_BRACKETS[status];
+  let tax = 0;
+  for (let i = 0; i < b.length; i++) {
+    const lower = b[i][0];
+    const rate = b[i][1];
+    const upper = (i + 1 < b.length) ? b[i+1][0] : Infinity;
+    if (taxable > lower) {
+      tax += (Math.min(taxable, upper) - lower) * rate;
+    } else break;
+  }
+  return tax;
+}
+
+function calcUSTax() {
+  const income = +document.getElementById('us-income').value || 0;
+  const status = document.getElementById('us-status').value;
+  const extra = +document.getElementById('us-deduct').value || 0;
+  const stdDed = US_STD_DED[status];
+  const totalDed = stdDed + extra;
+  const taxable = Math.max(0, income - totalDed);
+  const tax = usFederalTax(taxable, status);
+  const effRate = income > 0 ? (tax / income * 100) : 0;
+  const takeHome = income - tax;
+  const usd = n => '$' + Math.round(n).toLocaleString('en-US');
+  document.getElementById('us-result').innerHTML = `
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Gross Income</span><span class="num">${usd(income)}</span></div>
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Deduction (std ${usd(stdDed)}${extra?' + '+usd(extra):''})</span><span class="num">−${usd(totalDed)}</span></div>
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Taxable Income</span><span class="num">${usd(taxable)}</span></div>
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Federal Tax</span><span class="num font-bold text-lg">${usd(tax)}</span></div>
+    <div class="flex justify-between"><span>Effective Rate</span><span class="num">${effRate.toFixed(1)}%</span></div>
+    <div class="bg-slate-900 text-white rounded-lg p-3 mt-3 flex justify-between">
+      <span class="text-sm">After federal tax</span><span class="num font-bold">${usd(takeHome)}</span>
+    </div>
+  `;
+}
+
+// ========== TAX COUNTRY TOGGLE ==========
+document.getElementById('tax-country').addEventListener('change', function (e) {
+  const india = document.getElementById('tax-india');
+  const us = document.getElementById('tax-us');
+  if (e.target.value === 'us') {
+    india.classList.add('hidden');
+    us.classList.remove('hidden');
+    calcUSTax();
+  } else {
+    us.classList.add('hidden');
+    india.classList.remove('hidden');
+    calcTax();
+  }
+});
+
 // Init
-calcEMI(); calcSIP(); calcTax(); recalcInvoice();
+populateCC();
+calcEMI(); calcSIP(); calcTax(); calcUSTax(); recalcInvoice();
 </script>
 
 </body>
