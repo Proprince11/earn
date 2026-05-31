@@ -12,8 +12,16 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://proprince11.github.io/earn/" />
 <meta name="twitter:card" content="summary_large_image" />
+<meta property="og:image" content="https://proprince11.github.io/earn/og-image.png" />
+<meta name="twitter:image" content="https://proprince11.github.io/earn/og-image.png" />
 <link rel="canonical" href="https://proprince11.github.io/earn/" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>$</text></svg>" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="theme-color" content="#0f172a" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="FinKit" />
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script type="application/ld+json">
@@ -58,6 +66,7 @@
         <option value="JPY">¥ JPY</option>
         <option value="ZAR">R ZAR</option>
       </select>
+      <a href="resume-builder.html" class="text-sm text-slate-600 hover:text-slate-900">Resume</a>
       <a href="blog/" class="text-sm text-slate-600 hover:text-slate-900 hidden sm:inline">Blog</a>
     </div>
   </div>
@@ -275,6 +284,8 @@
     <select id="tax-country" class="border border-slate-300 rounded-lg px-3 py-2 text-sm">
       <option value="india">🇮🇳 India (FY 2024-25)</option>
       <option value="us">🇺🇸 United States (2024)</option>
+      <option value="uk">🇬🇧 United Kingdom (2024/25)</option>
+      <option value="canada">🇨🇦 Canada (2024 federal)</option>
     </select>
   </div>
 
@@ -327,6 +338,41 @@
       <p class="text-xs text-slate-400 mt-3">Federal income tax only. Excludes FICA (Social Security/Medicare), state, and local taxes. Estimate — verify with a tax professional.</p>
     </div>
   </div>
+
+  <!-- UK sub-panel -->
+  <div id="tax-uk" class="hidden grid md:grid-cols-2 gap-6">
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-1">Income Tax <span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded">UK / 2024-25</span></h3>
+      <p class="text-xs text-slate-500 mb-4">England/Wales/NI rates. Includes personal allowance taper above £100k.</p>
+      <label class="block text-sm text-slate-600 mb-1">Annual Gross Salary (£)</label>
+      <input id="uk-income" type="number" value="45000" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <label class="inline-flex items-center gap-2 text-sm text-slate-600 mb-4">
+        <input id="uk-ni" type="checkbox" checked class="rounded" /> Also estimate National Insurance (Class 1)
+      </label>
+      <button onclick="calcUKTax()" class="w-full bg-slate-900 text-white rounded-lg py-2 font-medium hover:bg-slate-800">Calculate</button>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-4">Estimate</h3>
+      <div id="uk-result" class="space-y-3 text-sm"></div>
+      <p class="text-xs text-slate-400 mt-3">Income tax (and optional NI) for England/Wales/NI. Scotland has different bands. Excludes student loan, pension relief. Estimate only.</p>
+    </div>
+  </div>
+
+  <!-- Canada sub-panel -->
+  <div id="tax-canada" class="hidden grid md:grid-cols-2 gap-6">
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-1">Federal Income Tax <span class="text-xs bg-rose-100 text-rose-800 px-2 py-0.5 rounded">Canada / 2024</span></h3>
+      <p class="text-xs text-slate-500 mb-4">Federal tax using 2024 brackets + basic personal amount. Provincial tax excluded.</p>
+      <label class="block text-sm text-slate-600 mb-1">Annual Gross Income (C$)</label>
+      <input id="ca-income" type="number" value="70000" class="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+      <button onclick="calcCanadaTax()" class="w-full bg-slate-900 text-white rounded-lg py-2 font-medium hover:bg-slate-800">Calculate</button>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-4">Estimate</h3>
+      <div id="ca-result" class="space-y-3 text-sm"></div>
+      <p class="text-xs text-slate-400 mt-3">Federal tax only — provincial/territorial tax (varies by province) and CPP/EI not included. Estimate — verify with a tax professional.</p>
+    </div>
+  </div>
 </section>
 
 <!-- ========== RENT RECEIPT (India bonus) ========== -->
@@ -375,6 +421,7 @@
 <footer class="border-t border-slate-200 py-6 px-4 bg-white">
   <div class="max-w-6xl mx-auto text-center text-xs text-slate-500 space-y-2">
     <div class="flex flex-wrap justify-center gap-4 text-slate-600">
+      <a href="resume-builder.html" class="hover:underline">Free Resume Builder</a>
       <a href="blog/freelance-invoice-guide.html" class="hover:underline">How to write a freelance invoice</a>
       <a href="blog/loan-prepayment-guide.html" class="hover:underline">Loan prepayment explained</a>
       <a href="blog/monthly-investing-guide.html" class="hover:underline">Why monthly investing wins</a>
@@ -954,24 +1001,96 @@ function calcUSTax() {
   `;
 }
 
+// ========== UK INCOME TAX (2024/25, England/Wales/NI) ==========
+function ukIncomeTax(income) {
+  let allowance = 12570;
+  if (income > 100000) allowance = Math.max(0, 12570 - (income - 100000) / 2);
+  const taxable = Math.max(0, income - allowance);
+  const basicBand = 37700;
+  const addlStart = Math.max(basicBand, 125140 - allowance);
+  let tax = 0;
+  tax += Math.min(taxable, basicBand) * 0.20;
+  if (taxable > basicBand) tax += (Math.min(taxable, addlStart) - basicBand) * 0.40;
+  if (taxable > addlStart) tax += (taxable - addlStart) * 0.45;
+  return { tax: tax, allowance: allowance, taxable: taxable };
+}
+function ukNI(income) {
+  let ni = 0;
+  if (income > 12570) ni += (Math.min(income, 50270) - 12570) * 0.08;
+  if (income > 50270) ni += (income - 50270) * 0.02;
+  return ni;
+}
+function calcUKTax() {
+  const income = +document.getElementById('uk-income').value || 0;
+  const incNI = document.getElementById('uk-ni').checked;
+  const r = ukIncomeTax(income);
+  const ni = incNI ? ukNI(income) : 0;
+  const total = r.tax + ni;
+  const take = income - total;
+  const eff = income > 0 ? (total / income * 100) : 0;
+  const gbp = n => '£' + Math.round(n).toLocaleString('en-GB');
+  document.getElementById('uk-result').innerHTML = `
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Gross Salary</span><span class="num">${gbp(income)}</span></div>
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Personal Allowance</span><span class="num">${gbp(r.allowance)}</span></div>
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Income Tax</span><span class="num font-semibold">${gbp(r.tax)}</span></div>
+    ${incNI ? `<div class="flex justify-between border-b border-slate-100 pb-2"><span>National Insurance</span><span class="num">${gbp(ni)}</span></div>` : ''}
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Total deductions</span><span class="num font-bold text-lg">${gbp(total)}</span></div>
+    <div class="flex justify-between"><span>Effective rate</span><span class="num">${eff.toFixed(1)}%</span></div>
+    <div class="bg-slate-900 text-white rounded-lg p-3 mt-3 flex justify-between"><span class="text-sm">Take-home (annual)</span><span class="num font-bold">${gbp(take)}</span></div>
+    <div class="flex justify-between text-slate-500 text-xs mt-1"><span>Monthly take-home</span><span class="num">${gbp(take / 12)}</span></div>
+  `;
+}
+
+// ========== CANADA FEDERAL TAX (2024) ==========
+function caFederalTax(income) {
+  const br = [[0,0.15],[55867,0.205],[111733,0.26],[173205,0.29],[246752,0.33]];
+  let tax = 0;
+  for (let i = 0; i < br.length; i++) {
+    const lo = br[i][0], rate = br[i][1], hi = (i + 1 < br.length) ? br[i+1][0] : Infinity;
+    if (income > lo) tax += (Math.min(income, hi) - lo) * rate; else break;
+  }
+  const bpaCredit = 15705 * 0.15; // basic personal amount as 15% non-refundable credit
+  return Math.max(0, tax - bpaCredit);
+}
+function calcCanadaTax() {
+  const income = +document.getElementById('ca-income').value || 0;
+  const tax = caFederalTax(income);
+  const eff = income > 0 ? (tax / income * 100) : 0;
+  const take = income - tax;
+  const cad = n => 'C$' + Math.round(n).toLocaleString('en-CA');
+  document.getElementById('ca-result').innerHTML = `
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Gross Income</span><span class="num">${cad(income)}</span></div>
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Basic Personal Amount</span><span class="num">${cad(15705)}</span></div>
+    <div class="flex justify-between border-b border-slate-100 pb-2"><span>Federal Tax</span><span class="num font-bold text-lg">${cad(tax)}</span></div>
+    <div class="flex justify-between"><span>Effective rate (federal)</span><span class="num">${eff.toFixed(1)}%</span></div>
+    <div class="bg-slate-900 text-white rounded-lg p-3 mt-3 flex justify-between"><span class="text-sm">After federal tax</span><span class="num font-bold">${cad(take)}</span></div>
+  `;
+}
+
 // ========== TAX COUNTRY TOGGLE ==========
 document.getElementById('tax-country').addEventListener('change', function (e) {
-  const india = document.getElementById('tax-india');
-  const us = document.getElementById('tax-us');
-  if (e.target.value === 'us') {
-    india.classList.add('hidden');
-    us.classList.remove('hidden');
-    calcUSTax();
-  } else {
-    us.classList.add('hidden');
-    india.classList.remove('hidden');
-    calcTax();
-  }
+  const map = { india: 'tax-india', us: 'tax-us', uk: 'tax-uk', canada: 'tax-canada' };
+  Object.values(map).forEach(id => document.getElementById(id).classList.add('hidden'));
+  const sel = e.target.value;
+  document.getElementById(map[sel] || 'tax-india').classList.remove('hidden');
+  if (sel === 'us') calcUSTax();
+  else if (sel === 'uk') calcUKTax();
+  else if (sel === 'canada') calcCanadaTax();
+  else calcTax();
 });
 
 // Init
 populateCC();
-calcEMI(); calcSIP(); calcTax(); calcUSTax(); recalcInvoice();
+calcEMI(); calcSIP(); calcTax(); calcUSTax(); calcUKTax(); calcCanadaTax(); recalcInvoice();
+</script>
+
+<!-- PWA service worker registration -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () { /* offline support unavailable */ });
+  });
+}
 </script>
 
 </body>

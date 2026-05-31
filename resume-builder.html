@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Free Resume Builder — Create a Professional CV PDF (No Signup)</title>
+<meta name="description" content="Free online resume / CV builder. Fill in your details, see a live preview, and download a clean professional PDF. No signup, no watermark, works on your phone." />
+<meta name="keywords" content="free resume builder, free cv maker, resume builder no signup, download resume pdf, professional cv template free, online resume generator" />
+<meta name="author" content="FinKit" />
+<meta property="og:title" content="Free Resume Builder — Professional CV PDF, No Signup" />
+<meta property="og:description" content="Fill in your details, preview live, download a clean PDF. 100% free." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://proprince11.github.io/earn/resume-builder.html" />
+<meta property="og:image" content="https://proprince11.github.io/earn/og-image.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="canonical" href="https://proprince11.github.io/earn/resume-builder.html" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="theme-color" content="#0f172a" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "FinKit Resume Builder",
+  "description": "Free online resume and CV builder with PDF download. No signup required.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0" }
+}
+</script>
+<style>
+  body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  input, textarea { font-size: 14px; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+<header class="bg-white border-b border-slate-200 sticky top-0 z-20">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <a href="./" class="flex items-center gap-2"><span class="text-2xl">💰</span><h1 class="text-lg font-bold">FinKit</h1></a>
+    <nav class="flex items-center gap-4 text-sm text-slate-600">
+      <a href="./" class="hover:text-slate-900">Tools</a>
+      <a href="blog/" class="hover:text-slate-900 hidden sm:inline">Blog</a>
+    </nav>
+  </div>
+</header>
+
+<section class="max-w-5xl mx-auto px-4 py-8 text-center">
+  <h2 class="text-2xl sm:text-3xl font-bold mb-2">Free Resume Builder</h2>
+  <p class="text-slate-600 max-w-2xl mx-auto">Fill in your details, watch the live preview update, and download a clean professional PDF. No signup. No watermark. Works on your phone.</p>
+</section>
+
+<main class="max-w-6xl mx-auto px-4 pb-16 grid lg:grid-cols-2 gap-6">
+
+  <!-- ===== FORM ===== -->
+  <div class="space-y-5">
+    <!-- Personal -->
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-3">Personal details</h3>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <input id="r-name" type="text" placeholder="Full name" class="border border-slate-300 rounded-lg px-3 py-2" />
+        <input id="r-title" type="text" placeholder="Job title (e.g. Software Engineer)" class="border border-slate-300 rounded-lg px-3 py-2" />
+        <input id="r-email" type="email" placeholder="Email" class="border border-slate-300 rounded-lg px-3 py-2" />
+        <input id="r-phone" type="text" placeholder="Phone" class="border border-slate-300 rounded-lg px-3 py-2" />
+        <input id="r-location" type="text" placeholder="Location (City, Country)" class="border border-slate-300 rounded-lg px-3 py-2" />
+        <input id="r-links" type="text" placeholder="LinkedIn / website / GitHub" class="border border-slate-300 rounded-lg px-3 py-2" />
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-3">Professional summary</h3>
+      <textarea id="r-summary" rows="3" placeholder="2-3 sentences: who you are, your strongest skills, and what you're looking for." class="w-full border border-slate-300 rounded-lg px-3 py-2"></textarea>
+    </div>
+
+    <!-- Experience -->
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-semibold">Work experience</h3>
+        <button onclick="addExp()" class="text-xs bg-slate-100 hover:bg-slate-200 rounded px-2 py-1">+ Add role</button>
+      </div>
+      <div id="r-exp" class="space-y-4"></div>
+    </div>
+
+    <!-- Education -->
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-semibold">Education</h3>
+        <button onclick="addEdu()" class="text-xs bg-slate-100 hover:bg-slate-200 rounded px-2 py-1">+ Add education</button>
+      </div>
+      <div id="r-edu" class="space-y-4"></div>
+    </div>
+
+    <!-- Skills -->
+    <div class="bg-white border border-slate-200 rounded-xl p-5">
+      <h3 class="font-semibold mb-3">Skills</h3>
+      <input id="r-skills" type="text" placeholder="Comma-separated: JavaScript, React, SQL, Project Management" class="w-full border border-slate-300 rounded-lg px-3 py-2" />
+    </div>
+
+    <button onclick="downloadResume()" class="w-full bg-slate-900 text-white rounded-lg py-3 font-medium hover:bg-slate-800">Download Resume PDF</button>
+
+    <!-- Affiliate slot -->
+    <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-sm">
+      <p class="font-medium mb-1">Want recruiter-tested templates & AI feedback?</p>
+      <p class="text-slate-600 text-xs mb-2">Tools that score your resume against the job description and check ATS-readiness.</p>
+      <a href="#" class="text-blue-600 underline text-xs" data-affiliate="resume">[Resume.io / Zety / Teal affiliate link]</a>
+    </div>
+  </div>
+
+  <!-- ===== LIVE PREVIEW ===== -->
+  <div class="lg:sticky lg:top-20 self-start">
+    <p class="text-xs text-slate-500 mb-2">Live preview</p>
+    <div id="r-preview" class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm text-sm leading-relaxed min-h-[400px]"></div>
+  </div>
+</main>
+
+<footer class="border-t border-slate-200 py-6 px-4 bg-white">
+  <div class="max-w-6xl mx-auto text-center text-xs text-slate-500 space-y-2">
+    <div class="flex flex-wrap justify-center gap-4 text-slate-600">
+      <a href="./" class="hover:underline">All tools</a>
+      <a href="blog/freelance-invoice-guide.html" class="hover:underline">Freelance invoicing guide</a>
+    </div>
+    <p>© 2026 FinKit. Free forever.</p>
+  </div>
+</footer>
+
+<script>
+// ===== Repeatable entries =====
+function expRow(d = {}) {
+  const wrap = document.createElement('div');
+  wrap.className = 'exp-row border border-slate-100 rounded-lg p-3 bg-slate-50';
+  wrap.innerHTML = `
+    <div class="grid sm:grid-cols-2 gap-2 mb-2">
+      <input data-f="role" type="text" placeholder="Job title" value="${d.role||''}" class="border border-slate-300 rounded px-2 py-1.5" />
+      <input data-f="company" type="text" placeholder="Company" value="${d.company||''}" class="border border-slate-300 rounded px-2 py-1.5" />
+      <input data-f="dates" type="text" placeholder="Dates (e.g. 2022 – Present)" value="${d.dates||''}" class="border border-slate-300 rounded px-2 py-1.5" />
+      <input data-f="place" type="text" placeholder="Location (optional)" value="${d.place||''}" class="border border-slate-300 rounded px-2 py-1.5" />
+    </div>
+    <textarea data-f="desc" rows="3" placeholder="Achievements — one per line. Start with action verbs and include numbers." class="w-full border border-slate-300 rounded px-2 py-1.5">${d.desc||''}</textarea>
+    <div class="text-right mt-1"><button class="text-xs text-red-600 hover:underline">Remove</button></div>
+  `;
+  wrap.querySelectorAll('input,textarea').forEach(i => i.addEventListener('input', renderPreview));
+  wrap.querySelector('button').addEventListener('click', () => { wrap.remove(); renderPreview(); });
+  return wrap;
+}
+function eduRow(d = {}) {
+  const wrap = document.createElement('div');
+  wrap.className = 'edu-row border border-slate-100 rounded-lg p-3 bg-slate-50';
+  wrap.innerHTML = `
+    <div class="grid sm:grid-cols-2 gap-2">
+      <input data-f="degree" type="text" placeholder="Degree / qualification" value="${d.degree||''}" class="border border-slate-300 rounded px-2 py-1.5" />
+      <input data-f="school" type="text" placeholder="School / University" value="${d.school||''}" class="border border-slate-300 rounded px-2 py-1.5" />
+      <input data-f="dates" type="text" placeholder="Dates (e.g. 2018 – 2022)" value="${d.dates||''}" class="border border-slate-300 rounded px-2 py-1.5" />
+      <input data-f="grade" type="text" placeholder="Grade / GPA (optional)" value="${d.grade||''}" class="border border-slate-300 rounded px-2 py-1.5" />
+    </div>
+    <div class="text-right mt-1"><button class="text-xs text-red-600 hover:underline">Remove</button></div>
+  `;
+  wrap.querySelectorAll('input').forEach(i => i.addEventListener('input', renderPreview));
+  wrap.querySelector('button').addEventListener('click', () => { wrap.remove(); renderPreview(); });
+  return wrap;
+}
+function addExp(d) { document.getElementById('r-exp').appendChild(expRow(d)); renderPreview(); }
+function addEdu(d) { document.getElementById('r-edu').appendChild(eduRow(d)); renderPreview(); }
+
+// ===== Collect data =====
+function collect() {
+  const val = id => (document.getElementById(id).value || '').trim();
+  const exp = [...document.querySelectorAll('#r-exp .exp-row')].map(r => {
+    const g = f => (r.querySelector(`[data-f="${f}"]`).value || '').trim();
+    return { role: g('role'), company: g('company'), dates: g('dates'), place: g('place'), desc: g('desc') };
+  }).filter(e => e.role || e.company || e.desc);
+  const edu = [...document.querySelectorAll('#r-edu .edu-row')].map(r => {
+    const g = f => (r.querySelector(`[data-f="${f}"]`).value || '').trim();
+    return { degree: g('degree'), school: g('school'), dates: g('dates'), grade: g('grade') };
+  }).filter(e => e.degree || e.school);
+  return {
+    name: val('r-name'), title: val('r-title'), email: val('r-email'), phone: val('r-phone'),
+    location: val('r-location'), links: val('r-links'), summary: val('r-summary'),
+    skills: val('r-skills').split(',').map(s => s.trim()).filter(Boolean), exp, edu
+  };
+}
+
+// ===== Live preview =====
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function renderPreview() {
+  const d = collect();
+  const contact = [d.email, d.phone, d.location, d.links].filter(Boolean).map(esc).join('  ·  ');
+  let html = `
+    <h1 class="text-xl font-bold">${esc(d.name) || 'Your Name'}</h1>
+    <p class="text-slate-600">${esc(d.title) || 'Your Job Title'}</p>
+    ${contact ? `<p class="text-xs text-slate-500 mt-1">${contact}</p>` : ''}
+    <hr class="my-3 border-slate-200" />
+  `;
+  if (d.summary) html += `<h2 class="font-semibold text-slate-800 mb-1">Summary</h2><p class="text-slate-700 mb-3">${esc(d.summary)}</p>`;
+  if (d.exp.length) {
+    html += `<h2 class="font-semibold text-slate-800 mb-1">Experience</h2>`;
+    d.exp.forEach(e => {
+      html += `<div class="mb-2">
+        <div class="flex justify-between"><span class="font-medium">${esc(e.role)}${e.company ? ', ' + esc(e.company) : ''}</span><span class="text-xs text-slate-500">${esc(e.dates)}</span></div>
+        ${e.place ? `<p class="text-xs text-slate-500">${esc(e.place)}</p>` : ''}
+        ${e.desc ? '<ul class="list-disc pl-5 text-slate-700 text-sm">' + e.desc.split('\n').filter(Boolean).map(l => `<li>${esc(l)}</li>`).join('') + '</ul>' : ''}
+      </div>`;
+    });
+  }
+  if (d.edu.length) {
+    html += `<h2 class="font-semibold text-slate-800 mb-1 mt-3">Education</h2>`;
+    d.edu.forEach(e => {
+      html += `<div class="mb-2 flex justify-between"><span><span class="font-medium">${esc(e.degree)}</span>${e.school ? ', ' + esc(e.school) : ''}${e.grade ? ' (' + esc(e.grade) + ')' : ''}</span><span class="text-xs text-slate-500">${esc(e.dates)}</span></div>`;
+    });
+  }
+  if (d.skills.length) {
+    html += `<h2 class="font-semibold text-slate-800 mb-1 mt-3">Skills</h2><p class="text-slate-700">${d.skills.map(esc).join(' · ')}</p>`;
+  }
+  document.getElementById('r-preview').innerHTML = html;
+}
+
+// ===== PDF export =====
+function downloadResume() {
+  const d = collect();
+  if (!d.name) { alert('Please enter your name.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const PW = doc.internal.pageSize.getWidth();
+  const M = 48;
+  const maxW = PW - M * 2;
+  let y = M;
+
+  function ensureSpace(h) {
+    if (y + h > doc.internal.pageSize.getHeight() - M) { doc.addPage(); y = M; }
+  }
+  function heading(txt) {
+    ensureSpace(28);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(15, 23, 42);
+    doc.text(txt.toUpperCase(), M, y);
+    y += 5;
+    doc.setDrawColor(203, 213, 225); doc.line(M, y, PW - M, y);
+    y += 14;
+    doc.setTextColor(30, 41, 59);
+  }
+  function para(txt, size, gap) {
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(size);
+    const lines = doc.splitTextToSize(txt, maxW);
+    lines.forEach(ln => { ensureSpace(size + 4); doc.text(ln, M, y); y += size + 4; });
+    y += gap || 0;
+  }
+
+  // Name + title
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(22); doc.setTextColor(15, 23, 42);
+  doc.text(d.name, M, y); y += 24;
+  if (d.title) { doc.setFont('helvetica', 'normal'); doc.setFontSize(12); doc.setTextColor(71, 85, 105); doc.text(d.title, M, y); y += 16; }
+  const contact = [d.email, d.phone, d.location, d.links].filter(Boolean).join('   |   ');
+  if (contact) { doc.setFontSize(9); doc.setTextColor(100, 116, 139); doc.text(contact, M, y); y += 8; }
+  y += 6;
+  doc.setDrawColor(15, 23, 42); doc.setLineWidth(1); doc.line(M, y, PW - M, y); doc.setLineWidth(0.5); y += 18;
+
+  if (d.summary) { heading('Summary'); para(d.summary, 10, 8); }
+
+  if (d.exp.length) {
+    heading('Experience');
+    d.exp.forEach(e => {
+      ensureSpace(20);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(15, 23, 42);
+      const left = e.role + (e.company ? ', ' + e.company : '');
+      doc.text(left, M, y);
+      if (e.dates) { doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(100, 116, 139); doc.text(e.dates, PW - M, y, { align: 'right' }); }
+      y += 13;
+      if (e.place) { doc.setFont('helvetica', 'italic'); doc.setFontSize(9); doc.setTextColor(100, 116, 139); doc.text(e.place, M, y); y += 12; }
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(30, 41, 59);
+      e.desc.split('\n').filter(Boolean).forEach(line => {
+        const wrapped = doc.splitTextToSize(line, maxW - 14);
+        wrapped.forEach((ln, i) => {
+          ensureSpace(13);
+          if (i === 0) { doc.text('•', M + 2, y); }
+          doc.text(ln, M + 14, y);
+          y += 13;
+        });
+      });
+      y += 6;
+    });
+  }
+
+  if (d.edu.length) {
+    heading('Education');
+    d.edu.forEach(e => {
+      ensureSpace(16);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(15, 23, 42);
+      const left = e.degree + (e.school ? ', ' + e.school : '') + (e.grade ? ' (' + e.grade + ')' : '');
+      const lines = doc.splitTextToSize(left, maxW - 80);
+      doc.text(lines, M, y);
+      if (e.dates) { doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(100, 116, 139); doc.text(e.dates, PW - M, y, { align: 'right' }); }
+      y += lines.length * 13 + 4;
+    });
+    y += 4;
+  }
+
+  if (d.skills.length) { heading('Skills'); para(d.skills.join('  •  '), 10, 0); }
+
+  doc.save('Resume_' + d.name.replace(/\s+/g, '_') + '.pdf');
+}
+
+// ===== Init with one sample row each =====
+addExp();
+addEdu();
+renderPreview();
+['r-name','r-title','r-email','r-phone','r-location','r-links','r-summary','r-skills']
+  .forEach(id => document.getElementById(id).addEventListener('input', renderPreview));
+</script>
+
+<!-- PWA service worker registration -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+}
+</script>
+
+</body>
+</html>
