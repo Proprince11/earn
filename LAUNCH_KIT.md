@@ -2,7 +2,7 @@
 
 Every piece of text you need for distribution is written below. When you reach a step in `CHECKLIST.md`, come here, copy the relevant block, paste it, fill the `[brackets]`, done.
 
-**One thing to do first:** once your site is live, find-and-replace `YOUR-URL` everywhere below with your real Vercel URL (e.g. `finkit.vercel.app`).
+**One thing already done for you:** every `https://proprince11.github.io/earn` below has been replaced with your live link `https://proprince11.github.io/earn/`. Just copy and paste.
 
 ---
 
@@ -67,7 +67,7 @@ I just shipped a free finance toolkit — invoice generator, loan calculator, in
 
 Building in public. Real numbers, no hype. 🧵
 
-YOUR-URL
+https://proprince11.github.io/earn
 
 2/ Why finance tools?
 
@@ -92,7 +92,7 @@ No ads. No course. Just assets that keep working.
 
 If you're also building with $0 and a laptop, follow along. Let's see if this actually works.
 
-YOUR-URL
+https://proprince11.github.io/earn
 
 #buildinpublic #indiehackers #freelance
 ```
@@ -110,7 +110,7 @@ Lesson: [one honest sentence]
 
 Next: [what you're shipping this week]
 
-YOUR-URL
+https://proprince11.github.io/earn
 ```
 
 ---
@@ -128,7 +128,7 @@ A few things that made clients pay me faster:
 3. Add a one-click payment option right in the invoice (PayPal/Wise/Stripe link).
 4. Send it the same day you finish, not Monday morning.
 
-I got tired of rebuilding invoices in Word so I made a free generator (multi-currency, PDF, no signup) — YOUR-URL if it's useful. The principles matter more than the tool though.
+I got tired of rebuilding invoices in Word so I made a free generator (multi-currency, PDF, no signup) — https://proprince11.github.io/earn if it's useful. The principles matter more than the tool though.
 ```
 
 ### Template B — someone asking "should I prepay my loan or invest?"
@@ -137,7 +137,7 @@ The honest answer is "it depends on your real return, not the theoretical one."
 
 The textbook math says invest if your loan rate < expected market return. But that assumes you actually stay invested through a 40% crash, which most people don't. After taxes and behavioral leakage, the gap between a 6.5% loan and a "10% market" often shrinks to ~1.5%.
 
-I ran the numbers on a $200k mortgage here if you want to see both scenarios side by side: YOUR-URL/blog/loan-prepayment-guide.html
+I ran the numbers on a $200k mortgage here if you want to see both scenarios side by side: https://proprince11.github.io/earn/blog/loan-prepayment-guide.html
 
 For most people the answer is "do both" — split the extra payment 50/50.
 ```
@@ -148,7 +148,7 @@ One thing most calculators hide: the step-up.
 
 If you increase your monthly contribution ~5% a year (in line with your salary), your final corpus can nearly double vs keeping it flat for 30 years. The dollar increase feels invisible year to year ($500 → $525) but the compounding is where the second million comes from.
 
-Made a free calculator with a step-up field since most don't have one: YOUR-URL — toggle the step-up % and watch the difference.
+Made a free calculator with a step-up field since most don't have one: https://proprince11.github.io/earn — toggle the step-up % and watch the difference.
 ```
 
 ### Where to post
@@ -251,7 +251,7 @@ I'm a student with a low-end laptop, unlimited internet, and AI credits — no m
 
 First ship: FinKit — free invoice generator, loan calculator (with prepayment), and investment calculator (with step-up). Client-side, no signup, multi-currency. Plus a couple of India-specific tax tools.
 
-YOUR-URL
+https://proprince11.github.io/earn
 
 The strategy:
 - free useful tools → rank on Google over time
@@ -268,7 +268,7 @@ Roast the landing page — what's confusing?
 
 ## 🔁 When you've done the account steps, send me:
 
-- ✅ Your live Vercel URL → I'll update sitemap.xml, canonical tags, OG tags, and all the `YOUR-URL` references in the code
+- ✅ Your live Vercel URL → I'll update sitemap.xml, canonical tags, OG tags, and all the `https://proprince11.github.io/earn` references in the code
 - ✅ Any approved affiliate link → I'll plug it into the right slot in index.html
 - ✅ Your Gumroad product URL → I'll add a "Get the Prompt Pack" CTA section to the homepage
 

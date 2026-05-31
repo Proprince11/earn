@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://earn.vercel.app/sitemap.xml
+Sitemap: https://proprince11.github.io/earn/sitemap.xml

@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://earn.vercel.app/</loc>
+    <loc>https://proprince11.github.io/earn/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://earn.vercel.app/blog/</loc>
+    <loc>https://proprince11.github.io/earn/blog/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://earn.vercel.app/blog/freelance-invoice-guide.html</loc>
+    <loc>https://proprince11.github.io/earn/blog/freelance-invoice-guide.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://earn.vercel.app/blog/loan-prepayment-guide.html</loc>
+    <loc>https://proprince11.github.io/earn/blog/loan-prepayment-guide.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://earn.vercel.app/blog/monthly-investing-guide.html</loc>
+    <loc>https://proprince11.github.io/earn/blog/monthly-investing-guide.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
