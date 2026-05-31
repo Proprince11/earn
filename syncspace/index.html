@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyncSpace Creator Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        neon: {
+                            pink: '#FF2D7B',
+                            cyan: '#00E5FF',
+                            purple: '#A855F7',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #4338ca 0%, #7c3aed 40%, #0d9488 100%);
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+        }
+        .glass-card-dark {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .neon-btn {
+            background: linear-gradient(135deg, #FF2D7B, #A855F7);
+            box-shadow: 0 0 20px rgba(255, 45, 123, 0.4), 0 0 40px rgba(168, 85, 247, 0.2);
+            transition: all 0.3s ease;
+        }
+        .neon-btn:hover {
+            box-shadow: 0 0 30px rgba(255, 45, 123, 0.6), 0 0 60px rgba(168, 85, 247, 0.4);
+            transform: translateY(-2px);
+        }
+        .sidebar-item {
+            transition: all 0.2s ease;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 3px solid #00E5FF;
+        }
+        .kpi-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+        }
+        .glow-pink {
+            box-shadow: 0 0 15px rgba(255, 45, 123, 0.3);
+        }
+        .glow-purple {
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+        }
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            border-radius: 9999px;
+            transition: width 0.8s ease;
+        }
+        .heatmap-cell {
+            transition: all 0.2s ease;
+        }
+        .heatmap-cell:hover {
+            transform: scale(1.2);
+            z-index: 10;
+        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        @keyframes pulse-neon {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-pulse-neon {
+            animation: pulse-neon 2s ease-in-out infinite;
+        }
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00E5FF;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+        }
+        .slider-thumb::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00E5FF;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="text-white overflow-hidden">
+    <div class="flex h-screen">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-64 glass-card-dark flex flex-col py-6 px-3 fixed h-full z-50">
+            <!-- Logo -->
+            <div class="px-3 mb-8">
+                <svg viewBox="0 0 200 40" class="w-full h-10">
+                    <defs>
+                        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#00E5FF"/>
+                            <stop offset="50%" style="stop-color:#A855F7"/>
+                            <stop offset="100%" style="stop-color:#FF2D7B"/>
+                        </linearGradient>
+                    </defs>
+                    <circle cx="18" cy="20" r="12" fill="none" stroke="url(#logoGrad)" stroke-width="2.5"/>
+                    <circle cx="18" cy="20" r="6" fill="url(#logoGrad)" opacity="0.6"/>
+                    <path d="M12 20 Q18 10 24 20 Q18 30 12 20" fill="none" stroke="url(#logoGrad)" stroke-width="1.5"/>
+                    <text x="38" y="25" font-family="Plus Jakarta Sans" font-weight="700" font-size="14" fill="url(#logoGrad)">SyncSpace</text>
+                    <text x="38" y="37" font-family="Plus Jakarta Sans" font-weight="400" font-size="8" fill="rgba(255,255,255,0.6)">Creator Hub</text>
+                </svg>
+            </div>
+
+            <!-- Navigation Items -->
+            <nav class="flex-1 space-y-1">
+                <button onclick="showScreen('dashboard')" class="sidebar-item active w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium" data-screen="dashboard">
+                    <svg class="w-5 h-5 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    Dashboard
+                </button>
+                <button onclick="showScreen('scraper')" class="sidebar-item w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium" data-screen="scraper">
+                    <svg class="w-5 h-5 text-neon-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    YouTube Scraper
+                </button>
+                <button onclick="showScreen('planner')" class="sidebar-item w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium" data-screen="planner">
+                    <svg class="w-5 h-5 text-neon-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Instagram Planner
+                </button>
+                <button onclick="showScreen('hooks')" class="sidebar-item w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium" data-screen="hooks">
+                    <svg class="w-5 h-5 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    AI Hook Generator
+                </button>
+                <button onclick="showScreen('evaluator')" class="sidebar-item w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium" data-screen="evaluator">
+                    <svg class="w-5 h-5 text-neon-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Thumbnail Evaluator
+                </button>
+                <button onclick="showScreen('performance')" class="sidebar-item w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium" data-screen="performance">
+                    <svg class="w-5 h-5 text-neon-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    Performance Report
+                </button>
+                <button onclick="showScreen('posting')" class="sidebar-item w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium" data-screen="posting">
+                    <svg class="w-5 h-5 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Posting Windows
+                </button>
+            </nav>
+
+            <!-- User Profile -->
+            <div class="mt-auto px-3 pt-4 border-t border-white/10">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center text-sm font-bold">TC</div>
+                    <div>
+                        <p class="text-sm font-semibold">TechCraft</p>
+                        <p class="text-xs text-white/50">Pro Creator</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- Main Content Area -->
+        <main class="ml-64 flex-1 overflow-y-auto p-8">
+
+            <!-- SCREEN 1: Dashboard Hero -->
+            <section id="screen-dashboard" class="screen active">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold mb-2">Welcome back, TechCraft</h1>
+                    <p class="text-white/60">Here is your creator performance overview for this week.</p>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="kpi-card rounded-2xl p-6 glow-cyan">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-neon-cyan/20 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-neon-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            </div>
+                            <span class="text-xs text-green-400 font-medium bg-green-400/10 px-2 py-1 rounded-full">+12.5%</span>
+                        </div>
+                        <h3 class="text-3xl font-bold mb-1">2.4M</h3>
+                        <p class="text-white/50 text-sm">Total Views This Month</p>
+                    </div>
+
+                    <div class="kpi-card rounded-2xl p-6 glow-purple">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-neon-purple/20 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-neon-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            </div>
+                            <span class="text-xs text-purple-400 font-medium bg-purple-400/10 px-2 py-1 rounded-full">On Track</span>
+                        </div>
+                        <h3 class="text-3xl font-bold mb-1">12</h3>
+                        <p class="text-white/50 text-sm">Planned Posts This Week</p>
+                    </div>
+
+                    <div class="kpi-card rounded-2xl p-6 glow-pink">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-neon-pink/20 flex items-center justify-center">
+                                <svg class="w-6 h-6 text-neon-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                            </div>
+                            <span class="text-xs text-pink-400 font-medium bg-pink-400/10 px-2 py-1 rounded-full">+2.1%</span>
+                        </div>
+                        <h3 class="text-3xl font-bold mb-1">6.8%</h3>
+                        <p class="text-white/50 text-sm">Average CTR</p>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="glass-card rounded-2xl p-6 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Recent Scraping Activity</h2>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z"/><polygon fill="#fff" points="9.545,15.568 15.818,12 9.545,8.432"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium">TechVault Studios - 8 videos scraped</p>
+                                    <p class="text-xs text-white/40">2 hours ago</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-neon-cyan bg-neon-cyan/10 px-3 py-1 rounded-full">Complete</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium">Aria Wellness - 3 posts scheduled</p>
+                                    <p class="text-xs text-white/40">5 hours ago</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-neon-purple bg-neon-purple/10 px-3 py-1 rounded-full">Scheduled</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium">AI Hooks Generated - 6 new titles</p>
+                                    <p class="text-xs text-white/40">Yesterday</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-green-400 bg-green-400/10 px-3 py-1 rounded-full">Generated</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-3">Top Performing Video</h3>
+                        <div class="flex items-center gap-4">
+                            <div class="w-24 h-14 rounded-lg bg-gradient-to-br from-red-500/30 to-orange-500/30 flex items-center justify-center text-xs text-white/60">Thumbnail</div>
+                            <div>
+                                <p class="text-sm font-medium">Master React in 45 Minutes</p>
+                                <p class="text-xs text-white/40">3.2M views - 11.24% engagement</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-card rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold mb-3">Next Scheduled Post</h3>
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-lg bg-neon-pink/20 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-neon-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium">FAANG Interview Journey</p>
+                                <p class="text-xs text-white/40">April 5, 2025 - YouTube</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 2: YouTube Scraper -->
+            <section id="screen-scraper" class="screen">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold mb-2">YouTube Channel Scraper</h1>
+                    <p class="text-white/60">Extract video metadata from any public YouTube channel.</p>
+                </div>
+
+                <!-- Scraper Input -->
+                <div class="glass-card rounded-2xl p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-white/70 mb-2">Channel URL</label>
+                            <input type="text" id="channelUrl" value="https://youtube.com/@techvaultstudios" placeholder="https://youtube.com/@channelname" class="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-neon-cyan focus:ring-1 focus:ring-neon-cyan/50 transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-white/70 mb-2">Max Videos: <span id="sliderValue" class="text-neon-cyan">25</span></label>
+                            <input type="range" id="maxVideos" min="1" max="50" value="25" class="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer slider-thumb" oninput="document.getElementById('sliderValue').textContent = this.value">
+                        </div>
+                    </div>
+                    <div class="mt-6 flex items-center gap-4">
+                        <button onclick="simulateScrape()" class="neon-btn px-8 py-3 rounded-xl font-semibold text-white text-sm tracking-wide">
+                            Scrape Channel Data
+                        </button>
+                        <span id="scrapeStatus" class="text-sm text-white/40"></span>
+                    </div>
+                </div>
+
+                <!-- Scraper Results Table -->
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-semibold">Scraped Results</h2>
+                        <div class="flex gap-2">
+                            <button onclick="exportData('csv')" class="px-4 py-2 rounded-lg bg-neon-cyan/20 border border-neon-cyan/30 text-neon-cyan text-xs font-medium hover:bg-neon-cyan/30 transition-colors">Export CSV</button>
+                            <button onclick="exportData('json')" class="px-4 py-2 rounded-lg bg-neon-purple/20 border border-neon-purple/30 text-neon-purple text-xs font-medium hover:bg-neon-purple/30 transition-colors">Export JSON</button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-white/10">
+                                    <th class="text-left py-3 px-2 text-white/50 font-medium">Thumbnail</th>
+                                    <th class="text-left py-3 px-2 text-white/50 font-medium">Title</th>
+                                    <th class="text-left py-3 px-2 text-white/50 font-medium">Views</th>
+                                    <th class="text-left py-3 px-2 text-white/50 font-medium">Upload Date</th>
+                                    <th class="text-left py-3 px-2 text-white/50 font-medium">Engagement</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scraperResults">
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                    <td class="py-3 px-2"><div class="w-20 h-12 rounded-lg bg-gradient-to-br from-red-500/40 to-yellow-500/40 flex items-center justify-center text-[10px] text-white/50">1920x1080</div></td>
+                                    <td class="py-3 px-2 font-medium">I Built a Mass Surveillance Detector for $20</td>
+                                    <td class="py-3 px-2 text-white/70">1,840,000</td>
+                                    <td class="py-3 px-2 text-white/50">Jan 15, 2025</td>
+                                    <td class="py-3 px-2"><span class="text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full text-xs">8.42%</span></td>
+                                </tr>
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                    <td class="py-3 px-2"><div class="w-20 h-12 rounded-lg bg-gradient-to-br from-blue-500/40 to-purple-500/40 flex items-center justify-center text-[10px] text-white/50">1920x1080</div></td>
+                                    <td class="py-3 px-2 font-medium">This AI Tool Replaces Your Entire Dev Team</td>
+                                    <td class="py-3 px-2 text-white/70">2,100,000</td>
+                                    <td class="py-3 px-2 text-white/50">Feb 1, 2025</td>
+                                    <td class="py-3 px-2"><span class="text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full text-xs">9.17%</span></td>
+                                </tr>
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                    <td class="py-3 px-2"><div class="w-20 h-12 rounded-lg bg-gradient-to-br from-teal-500/40 to-blue-500/40 flex items-center justify-center text-[10px] text-white/50">1920x1080</div></td>
+                                    <td class="py-3 px-2 font-medium">Why Every Programmer Needs a Home Lab</td>
+                                    <td class="py-3 px-2 text-white/70">890,000</td>
+                                    <td class="py-3 px-2 text-white/50">Feb 20, 2025</td>
+                                    <td class="py-3 px-2"><span class="text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded-full text-xs">6.33%</span></td>
+                                </tr>
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                    <td class="py-3 px-2"><div class="w-20 h-12 rounded-lg bg-gradient-to-br from-green-500/40 to-teal-500/40 flex items-center justify-center text-[10px] text-white/50">1920x1080</div></td>
+                                    <td class="py-3 px-2 font-medium">Master React in 45 Minutes - No Fluff Guide</td>
+                                    <td class="py-3 px-2 text-white/70">3,200,000</td>
+                                    <td class="py-3 px-2 text-white/50">Jan 8, 2025</td>
+                                    <td class="py-3 px-2"><span class="text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full text-xs">11.24%</span></td>
+                                </tr>
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                    <td class="py-3 px-2"><div class="w-20 h-12 rounded-lg bg-gradient-to-br from-indigo-500/40 to-pink-500/40 flex items-center justify-center text-[10px] text-white/50">1920x1080</div></td>
+                                    <td class="py-3 px-2 font-medium">System Design Interview: The Only Video You Need</td>
+                                    <td class="py-3 px-2 text-white/70">2,750,000</td>
+                                    <td class="py-3 px-2 text-white/50">Jan 22, 2025</td>
+                                    <td class="py-3 px-2"><span class="text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full text-xs">10.01%</span></td>
+                                </tr>
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                    <td class="py-3 px-2"><div class="w-20 h-12 rounded-lg bg-gradient-to-br from-orange-500/40 to-red-500/40 flex items-center justify-center text-[10px] text-white/50">1920x1080</div></td>
+                                    <td class="py-3 px-2 font-medium">I Mass-Applied to 500 Jobs Using Python</td>
+                                    <td class="py-3 px-2 text-white/70">1,920,000</td>
+                                    <td class="py-3 px-2 text-white/50">Feb 10, 2025</td>
+                                    <td class="py-3 px-2"><span class="text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full text-xs">7.89%</span></td>
+                                </tr>
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                    <td class="py-3 px-2"><div class="w-20 h-12 rounded-lg bg-gradient-to-br from-violet-500/40 to-blue-500/40 flex items-center justify-center text-[10px] text-white/50">1920x1080</div></td>
+                                    <td class="py-3 px-2 font-medium">Why PostgreSQL Destroys MongoDB for 99% of Apps</td>
+                                    <td class="py-3 px-2 text-white/70">1,450,000</td>
+                                    <td class="py-3 px-2 text-white/50">Mar 1, 2025</td>
+                                    <td class="py-3 px-2"><span class="text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full text-xs">8.55%</span></td>
+                                </tr>
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td class="py-3 px-2"><div class="w-20 h-12 rounded-lg bg-gradient-to-br from-cyan-500/40 to-indigo-500/40 flex items-center justify-center text-[10px] text-white/50">1920x1080</div></td>
+                                    <td class="py-3 px-2 font-medium">Homelab Tour 2025: $5000 Budget Breakdown</td>
+                                    <td class="py-3 px-2 text-white/70">1,200,000</td>
+                                    <td class="py-3 px-2 text-white/50">Mar 10, 2025</td>
+                                    <td class="py-3 px-2"><span class="text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded-full text-xs">7.12%</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 3: Instagram Planner -->
+            <section id="screen-planner" class="screen">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold mb-2">Instagram Content Planner</h1>
+                    <p class="text-white/60">Organize and schedule your Instagram posts across the week.</p>
+                </div>
+
+                <!-- Weekly Calendar Grid -->
+                <div class="grid grid-cols-7 gap-3 mb-6">
+                    <div class="text-center text-xs text-white/50 font-medium py-2">MON</div>
+                    <div class="text-center text-xs text-white/50 font-medium py-2">TUE</div>
+                    <div class="text-center text-xs text-white/50 font-medium py-2">WED</div>
+                    <div class="text-center text-xs text-white/50 font-medium py-2">THU</div>
+                    <div class="text-center text-xs text-white/50 font-medium py-2">FRI</div>
+                    <div class="text-center text-xs text-white/50 font-medium py-2">SAT</div>
+                    <div class="text-center text-xs text-white/50 font-medium py-2">SUN</div>
+                </div>
+
+                <div class="grid grid-cols-7 gap-3 mb-8">
+                    <!-- Monday -->
+                    <div class="glass-card rounded-xl p-3 min-h-[180px]">
+                        <p class="text-xs text-white/40 mb-2">Apr 7</p>
+                        <div class="bg-gradient-to-br from-neon-pink/20 to-purple-500/20 rounded-lg p-2 border border-neon-pink/30 mb-2">
+                            <p class="text-[10px] text-neon-pink font-semibold uppercase">Reel</p>
+                            <p class="text-xs mt-1 text-white/80">Morning routine cortisol hack</p>
+                            <p class="text-[10px] text-white/40 mt-1">9:00 AM</p>
+                        </div>
+                        <div class="border-2 border-dashed border-white/10 rounded-lg p-2 text-center">
+                            <p class="text-[10px] text-white/30">Drop content here</p>
+                        </div>
+                    </div>
+                    <!-- Tuesday -->
+                    <div class="glass-card rounded-xl p-3 min-h-[180px]">
+                        <p class="text-xs text-white/40 mb-2">Apr 8</p>
+                        <div class="border-2 border-dashed border-white/10 rounded-lg p-2 text-center h-16 flex items-center justify-center">
+                            <p class="text-[10px] text-white/30">Drop content here</p>
+                        </div>
+                    </div>
+                    <!-- Wednesday -->
+                    <div class="glass-card rounded-xl p-3 min-h-[180px]">
+                        <p class="text-xs text-white/40 mb-2">Apr 9</p>
+                        <div class="bg-gradient-to-br from-neon-cyan/20 to-blue-500/20 rounded-lg p-2 border border-neon-cyan/30 mb-2">
+                            <p class="text-[10px] text-neon-cyan font-semibold uppercase">Carousel</p>
+                            <p class="text-xs mt-1 text-white/80">3 supplements your doctor won't prescribe</p>
+                            <p class="text-[10px] text-white/40 mt-1">12:00 PM</p>
+                        </div>
+                    </div>
+                    <!-- Thursday -->
+                    <div class="glass-card rounded-xl p-3 min-h-[180px]">
+                        <p class="text-xs text-white/40 mb-2">Apr 10</p>
+                        <div class="bg-gradient-to-br from-neon-purple/20 to-indigo-500/20 rounded-lg p-2 border border-neon-purple/30">
+                            <p class="text-[10px] text-neon-purple font-semibold uppercase">Story</p>
+                            <p class="text-xs mt-1 text-white/80">Behind-the-scenes lab setup</p>
+                            <p class="text-[10px] text-white/40 mt-1">6:00 PM</p>
+                        </div>
+                    </div>
+                    <!-- Friday -->
+                    <div class="glass-card rounded-xl p-3 min-h-[180px]">
+                        <p class="text-xs text-white/40 mb-2">Apr 11</p>
+                        <div class="bg-gradient-to-br from-green-500/20 to-teal-500/20 rounded-lg p-2 border border-green-500/30 mb-2">
+                            <p class="text-[10px] text-green-400 font-semibold uppercase">Reel</p>
+                            <p class="text-xs mt-1 text-white/80">POV: Home lab costs more than car</p>
+                            <p class="text-[10px] text-white/40 mt-1">3:00 PM</p>
+                        </div>
+                    </div>
+                    <!-- Saturday -->
+                    <div class="glass-card rounded-xl p-3 min-h-[180px]">
+                        <p class="text-xs text-white/40 mb-2">Apr 12</p>
+                        <div class="border-2 border-dashed border-white/10 rounded-lg p-2 text-center h-16 flex items-center justify-center">
+                            <p class="text-[10px] text-white/30">Drop content here</p>
+                        </div>
+                    </div>
+                    <!-- Sunday -->
+                    <div class="glass-card rounded-xl p-3 min-h-[180px]">
+                        <p class="text-xs text-white/40 mb-2">Apr 13</p>
+                        <div class="bg-gradient-to-br from-orange-500/20 to-yellow-500/20 rounded-lg p-2 border border-orange-500/30">
+                            <p class="text-[10px] text-orange-400 font-semibold uppercase">Post</p>
+                            <p class="text-xs mt-1 text-white/80">Weekly recap + engagement CTA</p>
+                            <p class="text-[10px] text-white/40 mt-1">11:00 AM</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Post Form -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h2 class="text-xl font-semibold mb-4">Schedule New Post</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-white/70 mb-2">Caption / Hook</label>
+                            <textarea rows="4" placeholder="Write your opening hook here..." class="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-neon-cyan focus:ring-1 focus:ring-neon-cyan/50 transition-all resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-white/70 mb-2">Media Upload</label>
+                            <div class="border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-neon-cyan/50 transition-colors cursor-pointer">
+                                <svg class="w-10 h-10 mx-auto mb-3 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                                <p class="text-sm text-white/40">Drag and drop media or click to browse</p>
+                                <p class="text-xs text-white/20 mt-1">Supports JPG, PNG, MP4 (max 50MB)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 grid grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs text-white/50 mb-1">Content Type</label>
+                            <select class="w-full bg-white/5 border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neon-cyan">
+                                <option value="reel">Reel</option>
+                                <option value="post">Post</option>
+                                <option value="carousel">Carousel</option>
+                                <option value="story">Story</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-white/50 mb-1">Schedule Date</label>
+                            <input type="date" class="w-full bg-white/5 border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neon-cyan">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-white/50 mb-1">Schedule Time</label>
+                            <input type="time" class="w-full bg-white/5 border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neon-cyan">
+                        </div>
+                    </div>
+                    <button class="mt-6 neon-btn px-6 py-3 rounded-xl font-semibold text-white text-sm">Schedule Post</button>
+                </div>
+            </section>
+
+            <!-- SCREEN 4: AI Viral Hook Generator -->
+            <section id="screen-hooks" class="screen">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold mb-2">AI Viral Hook Generator</h1>
+                    <p class="text-white/60">Generate high-CTR titles and hooks powered by engagement data patterns.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Input Panel -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <h2 class="text-lg font-semibold mb-4">Input Parameters</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-white/70 mb-2">Core Topic / Keywords</label>
+                                <input type="text" id="hookTopic" value="building a mass surveillance detector with raspberry pi" placeholder="Enter your video topic or keywords..." class="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-neon-cyan focus:ring-1 focus:ring-neon-cyan/50 transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-white/70 mb-2">Target Platform</label>
+                                <div class="flex gap-3">
+                                    <button class="px-4 py-2 rounded-lg bg-red-500/20 border border-red-500/30 text-red-400 text-sm font-medium">YouTube</button>
+                                    <button class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/50 text-sm font-medium hover:bg-purple-500/20 hover:border-purple-500/30 hover:text-purple-400 transition-all">Instagram</button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-white/70 mb-2">Tone</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="px-3 py-1 rounded-full bg-neon-cyan/20 border border-neon-cyan/30 text-neon-cyan text-xs font-medium cursor-pointer">Shock Value</span>
+                                    <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/50 text-xs font-medium cursor-pointer hover:bg-neon-pink/20 hover:border-neon-pink/30 hover:text-neon-pink transition-all">Educational</span>
+                                    <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/50 text-xs font-medium cursor-pointer hover:bg-neon-purple/20 hover:border-neon-purple/30 hover:text-neon-purple transition-all">Curiosity Gap</span>
+                                    <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white/50 text-xs font-medium cursor-pointer hover:bg-green-400/20 hover:border-green-400/30 hover:text-green-400 transition-all">Authority</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-white/70 mb-2">Number of Hooks</label>
+                                <select class="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-neon-cyan">
+                                    <option value="3">3 Variations</option>
+                                    <option value="5">5 Variations</option>
+                                    <option value="10">10 Variations</option>
+                                </select>
+                            </div>
+                            <button onclick="generateHooks()" class="w-full neon-btn px-6 py-3 rounded-xl font-semibold text-white text-sm mt-2">Generate Viral Hooks</button>
+                        </div>
+                    </div>
+
+                    <!-- Output Panel -->
+                    <div class="space-y-4">
+                        <div class="glass-card rounded-2xl p-5 border-l-4 border-neon-pink glow-pink">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs text-neon-pink font-semibold uppercase tracking-wider">Hook #1 - Predicted CTR: 9.2%</span>
+                                <button class="text-xs text-white/40 hover:text-white transition-colors">Copy</button>
+                            </div>
+                            <h3 class="text-lg font-bold mb-2">I Built a $20 Device That Detects Every Camera Watching You</h3>
+                            <p class="text-sm text-white/60">Opening: "There are 47 cameras between my apartment and the coffee shop. I know because this device told me..."</p>
+                        </div>
+
+                        <div class="glass-card rounded-2xl p-5 border-l-4 border-neon-cyan glow-cyan">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs text-neon-cyan font-semibold uppercase tracking-wider">Hook #2 - Predicted CTR: 8.7%</span>
+                                <button class="text-xs text-white/40 hover:text-white transition-colors">Copy</button>
+                            </div>
+                            <h3 class="text-lg font-bold mb-2">Your Neighbors Are Watching You (Here Is How to Prove It for $20)</h3>
+                            <p class="text-sm text-white/60">Opening: "I pointed this homemade scanner at my neighborhood and found 312 hidden cameras in one block..."</p>
+                        </div>
+
+                        <div class="glass-card rounded-2xl p-5 border-l-4 border-neon-purple glow-purple">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs text-neon-purple font-semibold uppercase tracking-wider">Hook #3 - Predicted CTR: 7.9%</span>
+                                <button class="text-xs text-white/40 hover:text-white transition-colors">Copy</button>
+                            </div>
+                            <h3 class="text-lg font-bold mb-2">This Raspberry Pi Project Should Probably Be Illegal</h3>
+                            <p class="text-sm text-white/60">Opening: "The government does not want you building this. A $20 Raspberry Pi that reveals every surveillance device within 100 meters..."</p>
+                        </div>
+
+                        <div class="glass-card-dark rounded-xl p-4">
+                            <p class="text-xs text-white/40 text-center">Hooks generated based on analysis of 2,400+ viral videos in the Tech/DIY niche. Engagement predictions use historical CTR patterns from similar title structures.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 5: Thumbnail/Media Evaluator -->
+            <section id="screen-evaluator" class="screen">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold mb-2">Thumbnail & Media Evaluator</h1>
+                    <p class="text-white/60">Compare thumbnails side-by-side and test visibility across display modes.</p>
+                </div>
+
+                <!-- Controls -->
+                <div class="glass-card rounded-2xl p-4 mb-6 flex items-center justify-between flex-wrap gap-4">
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm font-medium text-white/70">Display Mode:</span>
+                        <button id="btnLightMode" onclick="toggleEvalMode('light')" class="px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-white text-xs font-medium">Light Mode</button>
+                        <button id="btnDarkMode" onclick="toggleEvalMode('dark')" class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/50 text-xs font-medium">Dark Mode</button>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" id="safeZoneToggle" onchange="toggleSafeZone()" class="w-4 h-4 rounded bg-white/10 border-white/20 text-neon-cyan focus:ring-neon-cyan/50">
+                            <span class="text-sm text-white/70">Safe-Zone Overlay</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Side by Side Comparison -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Thumbnail Slot A -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-semibold text-white/80">Variant A</h3>
+                            <span class="text-xs text-neon-cyan">Current</span>
+                        </div>
+                        <div id="thumbA" class="relative w-full aspect-video rounded-xl overflow-hidden bg-gradient-to-br from-red-600/60 via-orange-500/60 to-yellow-500/60 flex items-center justify-center">
+                            <div class="text-center">
+                                <p class="text-2xl font-bold drop-shadow-lg">I Built a $20</p>
+                                <p class="text-2xl font-bold drop-shadow-lg">Surveillance Detector</p>
+                                <p class="text-sm mt-2 text-white/70">TechVault Studios</p>
+                            </div>
+                            <div id="safeZoneA" class="absolute inset-0 hidden">
+                                <div class="absolute bottom-0 left-0 right-0 h-[20%] bg-red-500/30 border-t-2 border-dashed border-red-400/60 flex items-center justify-center">
+                                    <span class="text-[10px] text-red-300 font-medium">Progress Bar / Title Zone</span>
+                                </div>
+                                <div class="absolute top-0 right-0 w-[25%] h-[15%] bg-yellow-500/30 border-l-2 border-b-2 border-dashed border-yellow-400/60 flex items-center justify-center">
+                                    <span class="text-[10px] text-yellow-300 font-medium">Duration</span>
+                                </div>
+                                <div class="absolute top-2 left-2 px-2 py-1 bg-black/50 rounded text-[10px] text-white/80">Safe Zone Active</div>
+                            </div>
+                        </div>
+                        <div class="mt-3 grid grid-cols-3 gap-2 text-center">
+                            <div class="bg-white/5 rounded-lg p-2">
+                                <p class="text-xs text-white/40">Contrast</p>
+                                <p class="text-sm font-bold text-green-400">8.2/10</p>
+                            </div>
+                            <div class="bg-white/5 rounded-lg p-2">
+                                <p class="text-xs text-white/40">Readability</p>
+                                <p class="text-sm font-bold text-green-400">9.1/10</p>
+                            </div>
+                            <div class="bg-white/5 rounded-lg p-2">
+                                <p class="text-xs text-white/40">Click Factor</p>
+                                <p class="text-sm font-bold text-neon-cyan">High</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thumbnail Slot B -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-semibold text-white/80">Variant B</h3>
+                            <span class="text-xs text-neon-pink">Test</span>
+                        </div>
+                        <div id="thumbB" class="relative w-full aspect-video rounded-xl overflow-hidden bg-gradient-to-br from-indigo-600/60 via-purple-500/60 to-pink-500/60 flex items-center justify-center">
+                            <div class="text-center">
+                                <p class="text-2xl font-bold drop-shadow-lg">They Are WATCHING</p>
+                                <p class="text-2xl font-bold drop-shadow-lg">You Right Now</p>
+                                <p class="text-sm mt-2 text-white/70">$20 DIY Detector</p>
+                            </div>
+                            <div id="safeZoneB" class="absolute inset-0 hidden">
+                                <div class="absolute bottom-0 left-0 right-0 h-[20%] bg-red-500/30 border-t-2 border-dashed border-red-400/60 flex items-center justify-center">
+                                    <span class="text-[10px] text-red-300 font-medium">Progress Bar / Title Zone</span>
+                                </div>
+                                <div class="absolute top-0 right-0 w-[25%] h-[15%] bg-yellow-500/30 border-l-2 border-b-2 border-dashed border-yellow-400/60 flex items-center justify-center">
+                                    <span class="text-[10px] text-yellow-300 font-medium">Duration</span>
+                                </div>
+                                <div class="absolute top-2 left-2 px-2 py-1 bg-black/50 rounded text-[10px] text-white/80">Safe Zone Active</div>
+                            </div>
+                        </div>
+                        <div class="mt-3 grid grid-cols-3 gap-2 text-center">
+                            <div class="bg-white/5 rounded-lg p-2">
+                                <p class="text-xs text-white/40">Contrast</p>
+                                <p class="text-sm font-bold text-yellow-400">6.8/10</p>
+                            </div>
+                            <div class="bg-white/5 rounded-lg p-2">
+                                <p class="text-xs text-white/40">Readability</p>
+                                <p class="text-sm font-bold text-green-400">8.4/10</p>
+                            </div>
+                            <div class="bg-white/5 rounded-lg p-2">
+                                <p class="text-xs text-white/40">Click Factor</p>
+                                <p class="text-sm font-bold text-neon-pink">Very High</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Preview -->
+                <div class="glass-card rounded-2xl p-6">
+                    <h2 class="text-lg font-semibold mb-4">Mobile Feed Preview</h2>
+                    <div class="flex justify-center gap-8">
+                        <div class="w-48">
+                            <div class="bg-black/40 rounded-2xl p-2 border border-white/10">
+                                <div class="w-full aspect-video rounded-lg bg-gradient-to-br from-red-600/60 to-yellow-500/60 flex items-center justify-center mb-2">
+                                    <p class="text-[10px] font-bold text-center px-1">I Built a $20 Surveillance Detector</p>
+                                </div>
+                                <p class="text-[10px] font-medium px-1">I Built a $20 Surveillance Detector</p>
+                                <p class="text-[8px] text-white/40 px-1">TechVault Studios - 1.8M views</p>
+                            </div>
+                            <p class="text-center text-xs text-white/40 mt-2">Variant A</p>
+                        </div>
+                        <div class="w-48">
+                            <div class="bg-black/40 rounded-2xl p-2 border border-white/10">
+                                <div class="w-full aspect-video rounded-lg bg-gradient-to-br from-indigo-600/60 to-pink-500/60 flex items-center justify-center mb-2">
+                                    <p class="text-[10px] font-bold text-center px-1">They Are WATCHING You Right Now</p>
+                                </div>
+                                <p class="text-[10px] font-medium px-1">They Are WATCHING You Right Now</p>
+                                <p class="text-[8px] text-white/40 px-1">TechVault Studios - 1.8M views</p>
+                            </div>
+                            <p class="text-center text-xs text-white/40 mt-2">Variant B</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 6: Content Performance Variance -->
+            <section id="screen-performance" class="screen">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold mb-2">Content Performance Variance</h1>
+                    <p class="text-white/60">Compare projected vs actual performance across your recent videos.</p>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-3 gap-4 mb-8">
+                    <div class="glass-card rounded-xl p-4 text-center">
+                        <p class="text-2xl font-bold text-green-400">+18.3%</p>
+                        <p class="text-xs text-white/50 mt-1">Avg Overperformance</p>
+                    </div>
+                    <div class="glass-card rounded-xl p-4 text-center">
+                        <p class="text-2xl font-bold text-neon-cyan">5/8</p>
+                        <p class="text-xs text-white/50 mt-1">Videos Beat Projections</p>
+                    </div>
+                    <div class="glass-card rounded-xl p-4 text-center">
+                        <p class="text-2xl font-bold text-neon-purple">3.2M</p>
+                        <p class="text-xs text-white/50 mt-1">Top Performer</p>
+                    </div>
+                </div>
+
+                <!-- Performance Bars -->
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-semibold">Projected vs Actual Views</h2>
+                        <div class="flex items-center gap-4 text-xs">
+                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-white/30"></span> Projected</span>
+                            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-neon-cyan"></span> Actual</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- Video 1 -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-sm font-medium">Master React in 45 Minutes</p>
+                                <span class="text-xs text-green-400 font-medium">+28.0%</span>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-white/20" style="width: 78%"></div>
+                                </div>
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-gradient-to-r from-neon-cyan to-neon-purple" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-xs text-white/40 mt-1">
+                                <span>Projected: 2,500,000</span>
+                                <span>Actual: 3,200,000</span>
+                            </div>
+                        </div>
+
+                        <!-- Video 2 -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-sm font-medium">System Design Interview Guide</p>
+                                <span class="text-xs text-green-400 font-medium">+10.0%</span>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-white/20" style="width: 91%"></div>
+                                </div>
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-gradient-to-r from-neon-cyan to-neon-purple" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-xs text-white/40 mt-1">
+                                <span>Projected: 2,500,000</span>
+                                <span>Actual: 2,750,000</span>
+                            </div>
+                        </div>
+
+                        <!-- Video 3 -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-sm font-medium">This AI Tool Replaces Your Dev Team</p>
+                                <span class="text-xs text-green-400 font-medium">+16.7%</span>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-white/20" style="width: 86%"></div>
+                                </div>
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-gradient-to-r from-neon-cyan to-neon-purple" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-xs text-white/40 mt-1">
+                                <span>Projected: 1,800,000</span>
+                                <span>Actual: 2,100,000</span>
+                            </div>
+                        </div>
+
+                        <!-- Video 4 -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-sm font-medium">Mass-Applied to 500 Jobs with Python</p>
+                                <span class="text-xs text-green-400 font-medium">+6.7%</span>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-white/20" style="width: 94%"></div>
+                                </div>
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-gradient-to-r from-neon-cyan to-neon-purple" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-xs text-white/40 mt-1">
+                                <span>Projected: 1,800,000</span>
+                                <span>Actual: 1,920,000</span>
+                            </div>
+                        </div>
+
+                        <!-- Video 5 -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-sm font-medium">Surveillance Detector for $20</p>
+                                <span class="text-xs text-green-400 font-medium">+22.7%</span>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-white/20" style="width: 81%"></div>
+                                </div>
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-gradient-to-r from-neon-cyan to-neon-purple" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-xs text-white/40 mt-1">
+                                <span>Projected: 1,500,000</span>
+                                <span>Actual: 1,840,000</span>
+                            </div>
+                        </div>
+
+                        <!-- Video 6 - Underperformer -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-sm font-medium">Why Every Programmer Needs a Home Lab</p>
+                                <span class="text-xs text-red-400 font-medium">-11.0%</span>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-white/20" style="width: 100%"></div>
+                                </div>
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-gradient-to-r from-orange-400 to-red-400" style="width: 89%"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-xs text-white/40 mt-1">
+                                <span>Projected: 1,000,000</span>
+                                <span>Actual: 890,000</span>
+                            </div>
+                        </div>
+
+                        <!-- Video 7 - Underperformer -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-sm font-medium">PostgreSQL Destroys MongoDB for 99% of Apps</p>
+                                <span class="text-xs text-red-400 font-medium">-3.3%</span>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-white/20" style="width: 100%"></div>
+                                </div>
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-gradient-to-r from-orange-400 to-yellow-400" style="width: 97%"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-xs text-white/40 mt-1">
+                                <span>Projected: 1,500,000</span>
+                                <span>Actual: 1,450,000</span>
+                            </div>
+                        </div>
+
+                        <!-- Video 8 -->
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-sm font-medium">Homelab Tour 2025: $5000 Budget</p>
+                                <span class="text-xs text-red-400 font-medium">-14.3%</span>
+                            </div>
+                            <div class="space-y-1">
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-white/20" style="width: 100%"></div>
+                                </div>
+                                <div class="progress-bar h-3">
+                                    <div class="progress-fill h-full bg-gradient-to-r from-red-400 to-orange-400" style="width: 86%"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-xs text-white/40 mt-1">
+                                <span>Projected: 1,400,000</span>
+                                <span>Actual: 1,200,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SCREEN 7: Best Posting Window Report -->
+            <section id="screen-posting" class="screen">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold mb-2">Best Posting Window Report</h1>
+                    <p class="text-white/60">Optimal posting times based on historical engagement analysis.</p>
+                </div>
+
+                <!-- Legend -->
+                <div class="glass-card rounded-2xl p-4 mb-6 flex items-center justify-between flex-wrap gap-4">
+                    <div class="flex items-center gap-4 text-xs">
+                        <span class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-green-500"></span> Peak (8%+ CTR)</span>
+                        <span class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-emerald-400/70"></span> High (6-8% CTR)</span>
+                        <span class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-yellow-400/70"></span> Medium (4-6% CTR)</span>
+                        <span class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-orange-400/70"></span> Low (2-4% CTR)</span>
+                        <span class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-red-400/50"></span> Avoid (&lt;2% CTR)</span>
+                    </div>
+                    <span class="text-xs text-white/40">Based on 90-day rolling data</span>
+                </div>
+
+                <!-- Heatmap Grid -->
+                <div class="glass-card rounded-2xl p-6 overflow-x-auto">
+                    <table class="w-full text-xs">
+                        <thead>
+                            <tr>
+                                <th class="py-2 px-1 text-white/50 font-medium text-left w-20">Time</th>
+                                <th class="py-2 px-1 text-white/50 font-medium text-center">Mon</th>
+                                <th class="py-2 px-1 text-white/50 font-medium text-center">Tue</th>
+                                <th class="py-2 px-1 text-white/50 font-medium text-center">Wed</th>
+                                <th class="py-2 px-1 text-white/50 font-medium text-center">Thu</th>
+                                <th class="py-2 px-1 text-white/50 font-medium text-center">Fri</th>
+                                <th class="py-2 px-1 text-white/50 font-medium text-center">Sat</th>
+                                <th class="py-2 px-1 text-white/50 font-medium text-center">Sun</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="py-1 px-1 text-white/40">6:00 AM</td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-red-400/50 flex items-center justify-center text-[10px] text-white/70">1.2%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-red-400/50 flex items-center justify-center text-[10px] text-white/70">1.4%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-red-400/50 flex items-center justify-center text-[10px] text-white/70">1.1%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-red-400/50 flex items-center justify-center text-[10px] text-white/70">1.3%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-red-400/50 flex items-center justify-center text-[10px] text-white/70">1.0%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-orange-400/70 flex items-center justify-center text-[10px] text-white/70">2.8%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-orange-400/70 flex items-center justify-center text-[10px] text-white/70">3.1%</div></td>
+                            </tr>
+                            <tr>
+                                <td class="py-1 px-1 text-white/40">8:00 AM</td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-orange-400/70 flex items-center justify-center text-[10px] text-white/70">3.2%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-yellow-400/70 flex items-center justify-center text-[10px] text-white/70">4.5%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-yellow-400/70 flex items-center justify-center text-[10px] text-white/70">4.2%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-yellow-400/70 flex items-center justify-center text-[10px] text-white/70">4.8%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-orange-400/70 flex items-center justify-center text-[10px] text-white/70">3.9%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.2%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.8%</div></td>
+                            </tr>
+                            <tr>
+                                <td class="py-1 px-1 text-white/40">10:00 AM</td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-yellow-400/70 flex items-center justify-center text-[10px] text-white/70">5.4%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.7%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.1%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">7.2%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-yellow-400/70 flex items-center justify-center text-[10px] text-white/70">5.8%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">8.9%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">9.1%</div></td>
+                            </tr>
+                            <tr>
+                                <td class="py-1 px-1 text-white/40">12:00 PM</td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">7.1%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">8.4%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">7.8%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">8.1%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.9%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">9.4%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">8.8%</div></td>
+                            </tr>
+                            <tr>
+                                <td class="py-1 px-1 text-white/40">2:00 PM</td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.5%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">7.2%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.8%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">7.4%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-yellow-400/70 flex items-center justify-center text-[10px] text-white/70">5.9%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">7.8%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">7.5%</div></td>
+                            </tr>
+                            <tr>
+                                <td class="py-1 px-1 text-white/40">4:00 PM</td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-yellow-400/70 flex items-center justify-center text-[10px] text-white/70">5.1%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.3%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-yellow-400/70 flex items-center justify-center text-[10px] text-white/70">5.7%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.1%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-yellow-400/70 flex items-center justify-center text-[10px] text-white/70">5.2%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.6%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.2%</div></td>
+                            </tr>
+                            <tr>
+                                <td class="py-1 px-1 text-white/40">6:00 PM</td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">7.3%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">8.7%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">8.2%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">9.1%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">7.6%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">7.2%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.9%</div></td>
+                            </tr>
+                            <tr>
+                                <td class="py-1 px-1 text-white/40">8:00 PM</td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">8.9%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">9.3%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">8.8%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">9.6%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-green-500 flex items-center justify-center text-[10px] text-white font-bold">8.4%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.5%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-yellow-400/70 flex items-center justify-center text-[10px] text-white/70">5.8%</div></td>
+                            </tr>
+                            <tr>
+                                <td class="py-1 px-1 text-white/40">10:00 PM</td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.2%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">7.1%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">6.5%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-emerald-400/70 flex items-center justify-center text-[10px] text-white/70">7.0%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-yellow-400/70 flex items-center justify-center text-[10px] text-white/70">5.4%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-yellow-400/70 flex items-center justify-center text-[10px] text-white/70">4.8%</div></td>
+                                <td class="py-1 px-1"><div class="heatmap-cell w-full h-8 rounded-md bg-orange-400/70 flex items-center justify-center text-[10px] text-white/70">3.9%</div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Insights -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="glass-card rounded-xl p-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <h3 class="text-sm font-semibold">Best Window</h3>
+                        </div>
+                        <p class="text-lg font-bold text-neon-cyan">Thu 8:00 PM</p>
+                        <p class="text-xs text-white/40 mt-1">9.6% average CTR - highest in 90 days</p>
+                    </div>
+                    <div class="glass-card rounded-xl p-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-3 h-3 rounded-full bg-emerald-400"></div>
+                            <h3 class="text-sm font-semibold">Weekend Peak</h3>
+                        </div>
+                        <p class="text-lg font-bold text-neon-purple">Sat 12:00 PM</p>
+                        <p class="text-xs text-white/40 mt-1">9.4% average CTR - strong weekend slot</p>
+                    </div>
+                    <div class="glass-card rounded-xl p-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                            <h3 class="text-sm font-semibold">Avoid Zone</h3>
+                        </div>
+                        <p class="text-lg font-bold text-neon-pink">Weekdays 6 AM</p>
+                        <p class="text-xs text-white/40 mt-1">Below 1.5% CTR - audience still asleep</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Screen Navigation
+        function showScreen(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            // Show selected screen
+            document.getElementById('screen-' + screenId).classList.add('active');
+            // Update sidebar active state
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-screen') === screenId) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // YouTube Scraper Simulation
+        function simulateScrape() {
+            const statusEl = document.getElementById('scrapeStatus');
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = 'Scraping...';
+            statusEl.textContent = 'Connecting to YouTube API...';
+            statusEl.className = 'text-sm text-neon-cyan animate-pulse-neon';
+
+            setTimeout(() => {
+                statusEl.textContent = 'Extracting video metadata...';
+            }, 800);
+
+            setTimeout(() => {
+                statusEl.textContent = 'Processing engagement metrics...';
+            }, 1600);
+
+            setTimeout(() => {
+                statusEl.textContent = '8 videos scraped successfully!';
+                statusEl.className = 'text-sm text-green-400';
+                btn.disabled = false;
+                btn.textContent = 'Scrape Channel Data';
+            }, 2400);
+        }
+
+        // Export Data Simulation
+        function exportData(format) {
+            const data = [
+                { title: 'I Built a Mass Surveillance Detector for $20', views: 1840000, date: '2025-01-15', engagement: 8.42 },
+                { title: 'This AI Tool Replaces Your Entire Dev Team', views: 2100000, date: '2025-02-01', engagement: 9.17 },
+                { title: 'Why Every Programmer Needs a Home Lab', views: 890000, date: '2025-02-20', engagement: 6.33 },
+                { title: 'Master React in 45 Minutes - No Fluff Guide', views: 3200000, date: '2025-01-08', engagement: 11.24 },
+                { title: 'System Design Interview: The Only Video You Need', views: 2750000, date: '2025-01-22', engagement: 10.01 },
+                { title: 'I Mass-Applied to 500 Jobs Using Python', views: 1920000, date: '2025-02-10', engagement: 7.89 },
+                { title: 'Why PostgreSQL Destroys MongoDB for 99% of Apps', views: 1450000, date: '2025-03-01', engagement: 8.55 },
+                { title: 'Homelab Tour 2025: $5000 Budget Breakdown', views: 1200000, date: '2025-03-10', engagement: 7.12 }
+            ];
+
+            let content, filename, mime;
+
+            if (format === 'csv') {
+                const headers = 'Title,Views,Upload Date,Engagement Rate\n';
+                const rows = data.map(d => `"${d.title}",${d.views},${d.date},${d.engagement}%`).join('\n');
+                content = headers + rows;
+                filename = 'syncspace_scraped_data.csv';
+                mime = 'text/csv';
+            } else {
+                content = JSON.stringify(data, null, 2);
+                filename = 'syncspace_scraped_data.json';
+                mime = 'application/json';
+            }
+
+            const blob = new Blob([content], { type: mime });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // AI Hook Generator
+        function generateHooks() {
+            const hooks = [
+                {
+                    title: 'The Government Does NOT Want You Seeing This $20 Build',
+                    opening: 'I walked through my city with nothing but a Raspberry Pi and a dream. What I found made me lock my doors...',
+                    ctr: '8.4%'
+                },
+                {
+                    title: 'I Exposed 200+ Hidden Cameras In My Neighborhood',
+                    opening: 'Every single day you walk past cameras you cannot see. This $20 device proves it in real-time...',
+                    ctr: '9.1%'
+                },
+                {
+                    title: 'Building the Device Corporations Fear Most (Under $20)',
+                    opening: 'Big tech spent billions hiding their surveillance. I spent $20 uncovering all of it...',
+                    ctr: '7.6%'
+                }
+            ];
+
+            const colors = ['neon-pink', 'neon-cyan', 'neon-purple'];
+            const glows = ['glow-pink', 'glow-cyan', 'glow-purple'];
+
+            // Simple visual feedback
+            const topic = document.getElementById('hookTopic').value;
+            if (!topic) {
+                alert('Please enter a topic or keywords first.');
+                return;
+            }
+        }
+
+        // Thumbnail Evaluator Controls
+        function toggleEvalMode(mode) {
+            const lightBtn = document.getElementById('btnLightMode');
+            const darkBtn = document.getElementById('btnDarkMode');
+            const thumbA = document.getElementById('thumbA');
+            const thumbB = document.getElementById('thumbB');
+
+            if (mode === 'dark') {
+                darkBtn.className = 'px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-white text-xs font-medium';
+                lightBtn.className = 'px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/50 text-xs font-medium';
+                thumbA.style.filter = 'brightness(0.7)';
+                thumbB.style.filter = 'brightness(0.7)';
+            } else {
+                lightBtn.className = 'px-4 py-2 rounded-lg bg-white/20 border border-white/30 text-white text-xs font-medium';
+                darkBtn.className = 'px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white/50 text-xs font-medium';
+                thumbA.style.filter = 'brightness(1)';
+                thumbB.style.filter = 'brightness(1)';
+            }
+        }
+
+        function toggleSafeZone() {
+            const checked = document.getElementById('safeZoneToggle').checked;
+            const zoneA = document.getElementById('safeZoneA');
+            const zoneB = document.getElementById('safeZoneB');
+
+            if (checked) {
+                zoneA.classList.remove('hidden');
+                zoneB.classList.remove('hidden');
+            } else {
+                zoneA.classList.add('hidden');
+                zoneB.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
